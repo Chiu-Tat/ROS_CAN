@@ -1,0 +1,8 @@
+prefix=/home/dz/Documents/CUHK/ROS_CAN/devel
+
+Name: basic_control
+Description: Description of basic_control
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
