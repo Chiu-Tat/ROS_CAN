@@ -118,6 +118,21 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
+   "/home/dz/Documents/CUHK/ROS_CAN/install/setup.fish;/home/dz/Documents/CUHK/ROS_CAN/install/local_setup.fish")
+  if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+  if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+file(INSTALL DESTINATION "/home/dz/Documents/CUHK/ROS_CAN/install" TYPE FILE FILES
+    "/home/dz/Documents/CUHK/ROS_CAN/build/catkin_generated/installspace/setup.fish"
+    "/home/dz/Documents/CUHK/ROS_CAN/build/catkin_generated/installspace/local_setup.fish"
+    )
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
    "/home/dz/Documents/CUHK/ROS_CAN/install/.rosinstall")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
@@ -131,8 +146,14 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/dz/Documents/CUHK/ROS_CAN/build/gtest/cmake_install.cmake")
+  include("/home/dz/Documents/CUHK/ROS_CAN/build/ICRA2026/cmake_install.cmake")
   include("/home/dz/Documents/CUHK/ROS_CAN/build/basic_control/cmake_install.cmake")
   include("/home/dz/Documents/CUHK/ROS_CAN/build/calibration/cmake_install.cmake")
+  include("/home/dz/Documents/CUHK/ROS_CAN/build/case1_omni_current_playback/cmake_install.cmake")
+  include("/home/dz/Documents/CUHK/ROS_CAN/build/case2_dual_magnet_trajectory/cmake_install.cmake")
+  include("/home/dz/Documents/CUHK/ROS_CAN/build/case4_three_sphere_playback/cmake_install.cmake")
+  include("/home/dz/Documents/CUHK/ROS_CAN/build/case6_single_sphere_closed_loop/cmake_install.cmake")
+  include("/home/dz/Documents/CUHK/ROS_CAN/build/case7_dual_microsphere_closed_loop/cmake_install.cmake")
 
 endif()
 

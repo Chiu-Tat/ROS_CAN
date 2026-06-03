@@ -297,6 +297,36 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Value Computed by CMake
+Case_1_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/Case_1
+
+//Value Computed by CMake
+Case_1_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/Case_1
+
+//Value Computed by CMake
+Case_2_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/Case_2
+
+//Value Computed by CMake
+Case_2_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/Case_2
+
+//Value Computed by CMake
+Case_4_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/Case_4
+
+//Value Computed by CMake
+Case_4_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/Case_4
+
+//Value Computed by CMake
+Case_6_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/Case_6
+
+//Value Computed by CMake
+Case_6_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/Case_6
+
+//Value Computed by CMake
+Case_7_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/Case_7
+
+//Value Computed by CMake
+Case_7_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/Case_7
+
 //Path to a program.
 DOXYGEN_EXECUTABLE:FILEPATH=DOXYGEN_EXECUTABLE-NOTFOUND
 
@@ -338,6 +368,12 @@ GTEST_MAIN_LIBRARY_DEBUG:FILEPATH=GTEST_MAIN_LIBRARY_DEBUG-NOTFOUND
 
 //The directory containing a CMake configuration file for GTest.
 GTest_DIR:PATH=GTest_DIR-NOTFOUND
+
+//Value Computed by CMake
+ICRA2026_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/ICRA2026
+
+//Value Computed by CMake
+ICRA2026_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/ICRA2026
 
 //Enable installation of googletest. (Projects embedding googletest
 // may want to turn this OFF.)
@@ -406,11 +442,44 @@ calibration_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/calibration
 //Value Computed by CMake
 calibration_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/calibration
 
+//Value Computed by CMake
+case1_omni_current_playback_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/case1_omni_current_playback
+
+//Value Computed by CMake
+case1_omni_current_playback_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/case1_omni_current_playback
+
+//Value Computed by CMake
+case2_dual_magnet_trajectory_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/case2_dual_magnet_trajectory
+
+//Value Computed by CMake
+case2_dual_magnet_trajectory_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/case2_dual_magnet_trajectory
+
+//Value Computed by CMake
+case4_three_sphere_playback_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/case4_three_sphere_playback
+
+//Value Computed by CMake
+case4_three_sphere_playback_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/case4_three_sphere_playback
+
+//Value Computed by CMake
+case6_single_sphere_closed_loop_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/case6_single_sphere_closed_loop
+
+//Value Computed by CMake
+case6_single_sphere_closed_loop_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/case6_single_sphere_closed_loop
+
+//Value Computed by CMake
+case7_dual_microsphere_closed_loop_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/case7_dual_microsphere_closed_loop
+
+//Value Computed by CMake
+case7_dual_microsphere_closed_loop_SOURCE_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/src/case7_dual_microsphere_closed_loop
+
 //The directory containing a CMake configuration file for catkin.
 catkin_DIR:PATH=/opt/ros/noetic/share/catkin/cmake
 
 //The directory containing a CMake configuration file for cpp_common.
 cpp_common_DIR:PATH=/opt/ros/noetic/share/cpp_common/cmake
+
+//The directory containing a CMake configuration file for geometry_msgs.
+geometry_msgs_DIR:PATH=/opt/ros/noetic/share/geometry_msgs/cmake
 
 //Value Computed by CMake
 gmock_BINARY_DIR:STATIC=/home/dz/Documents/CUHK/ROS_CAN/build/gtest/googlemock
@@ -639,7 +708,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=12
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

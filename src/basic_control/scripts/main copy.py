@@ -172,7 +172,7 @@ class CANApp(QtWidgets.QMainWindow):
             return
             
         # Load CSV data
-        csv_file_path = "/home/dz/Documents/CUHK/ROS_CAN/src/Case_1/scripts/coil_currents.csv"
+        csv_file_path = "/home/dz/Documents/CUHK/ROS_CAN/src/case1_omni_current_playback/scripts/coil_currents.csv"
         if not os.path.exists(csv_file_path):
             rospy.logerr(f"CSV file not found: {csv_file_path}")
             return

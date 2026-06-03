@@ -1,0 +1,8 @@
+prefix=/home/dz/Documents/CUHK/ROS_CAN/install
+
+Name: case1_omni_current_playback
+Description: Description of case1_omni_current_playback
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

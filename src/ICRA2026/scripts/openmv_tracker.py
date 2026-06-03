@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -9,16 +9,16 @@ Reads JSON data from OpenMV camera running Openmv_code.py via USB serial
 
   - Joint 1 (base): fixed at (joint1_x, joint1_y) in image pixels
   - Green: second joint (end of link1)
-  - Blue: end effector (end of link2)
+  - Red: end effector (end of link2)
 
   theta1: angle of link1 from horizontal (joint1 -> green)
-  theta2: angle of link2 relative to link1 (green -> blue, relative to link1)
+  theta2: angle of link2 relative to link1 (green -> red, relative to link1)
 
 Publishes:
+  /sphere/red     -> geometry_msgs/PointStamped
   /sphere/green   -> geometry_msgs/PointStamped
-  /sphere/blue    -> geometry_msgs/PointStamped
-  /arm/theta1     -> std_msgs/Float32 (rad)
-  /arm/theta2     -> std_msgs/Float32 (rad)
+  /arm/theta1     -> std_msgs/Float32 (deg)
+  /arm/theta2     -> std_msgs/Float32 (deg)
   /sphere/fps     -> std_msgs/Float32
 """
 
@@ -48,7 +48,7 @@ class OpenMVTracker(object):
         self.baudrate = rospy.get_param('~baudrate', 115200)
         self.frame_id = rospy.get_param('~frame_id', 'openmv_camera')
 
-        # 2-DOF arm geometry (image pixels). Joint1 = base, green = joint2, blue = end effector
+        # 2-DOF arm geometry (image pixels). Joint1 = base, green = joint2, red = end effector
         self.joint1_x = rospy.get_param('~joint1_x', 217.0)
         self.joint1_y = rospy.get_param('~joint1_y', 117.0)
 
@@ -63,8 +63,8 @@ class OpenMVTracker(object):
 
         # --- Publishers ---
         self.pub = {
+            'red':    rospy.Publisher('/sphere/red',    PointStamped, queue_size=10),
             'green':  rospy.Publisher('/sphere/green',  PointStamped, queue_size=10),
-            'blue':   rospy.Publisher('/sphere/blue',   PointStamped, queue_size=10),
             'theta1': rospy.Publisher('/arm/theta1',    Float32, queue_size=10),
             'theta2': rospy.Publisher('/arm/theta2',   Float32, queue_size=10),
             'fps':    rospy.Publisher('/sphere/fps',   Float32, queue_size=10)
@@ -119,11 +119,11 @@ class OpenMVTracker(object):
             fps_msg.data = float(data['fps'])
             self.pub['fps'].publish(fps_msg)
 
-        # --- Green and blue (from Openmv_code.py) ---
+        # --- Red and green (from Openmv_code.py) ---
+        red = data.get('red')
         green = data.get('green')
-        blue = data.get('blue')
 
-        for color, blob in [('green', green), ('blue', blue)]:
+        for color, blob in [('red', red), ('green', green)]:
             if blob is None:
                 continue
             if not isinstance(blob, dict) or 'x' not in blob or 'y' not in blob:
@@ -137,14 +137,14 @@ class OpenMVTracker(object):
             pt.point.z = 0.0
             self.pub[color].publish(pt)
 
-        # --- Joint angles (2-DOF arm: joint1 -> green -> blue) ---
+        # --- Joint angles (2-DOF arm: joint1 -> green -> red) ---
         # Openmv_code sends (x, y) as raw pixels (cx, cy)
-        if green is not None and blue is not None and isinstance(green, dict) and isinstance(blue, dict):
-            if 'x' in green and 'y' in green and 'x' in blue and 'y' in blue:
+        if green is not None and red is not None and isinstance(green, dict) and isinstance(red, dict):
+            if 'x' in green and 'y' in green and 'x' in red and 'y' in red:
                 gx = float(green['x'])
                 gy = float(green['y'])
-                bx = float(blue['x'])
-                by = float(blue['y'])
+                rx = float(red['x'])
+                ry = float(red['y'])
 
                 # Arm extends leftward from joint1, so negate dx to set
                 # 0° = horizontal (left), 90° = straight down (image y-down)
@@ -152,9 +152,9 @@ class OpenMVTracker(object):
                 dy1 = gy - self.joint1_y
                 theta1 = math.atan2(dy1, dx1) - math.radians(self.theta1_offset)
 
-                # theta2: angle of link2 relative to link1 (green -> blue)
-                dx2 = gx - bx
-                dy2 = by - gy
+                # theta2: angle of link2 relative to link1 (green -> red)
+                dx2 = gx - rx
+                dy2 = ry - gy
                 link2_angle = math.atan2(dy2, dx2)
                 theta2 = link2_angle - theta1 - math.radians(self.theta2_offset)
 

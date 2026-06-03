@@ -15,10 +15,11 @@ This project provides control software for an electromagnetic manipulation syste
 | Package | Description |
 |---------|-------------|
 | `ICRA2026` | ICRA 2026 submission: closed-loop control with PID and predefined motion sequences |
-| `Case_1` | Case 1 experiments and control |
-| `Case_2` | Case 2 experiments and control |
-| `Case_4` | Case 4 experiments and control |
-| `Case_6` | Case 6 experiments and control |
+| `case1_omni_current_playback` | Case 1: omnidirectional current playback |
+| `case2_dual_magnet_trajectory` | Case 2: dual-magnet trajectory control |
+| `case4_three_sphere_playback` | Case 4: three-sphere current playback and tracking |
+| `case6_single_sphere_closed_loop` | Case 6: single-sphere closed-loop trajectory control |
+| `case7_dual_microsphere_closed_loop` | Case 7: dual-microsphere closed-loop control |
 | `basic_control` | Basic control interface and utilities |
 | `calibration` | Calibration routines |
 
@@ -67,12 +68,13 @@ catkin build
 ROS_CAN/
 ├── src/
 │   ├── ICRA2026/      # Main control package
-│   ├── Case_1/        # Experiment case 1
-│   ├── Case_2/        # Experiment case 2
-│   ├── Case_4/        # Experiment case 4
-│   ├── Case_6/        # Experiment case 6
-│   ├── basic_control/ # Basic control utilities
-│   └── calibration/   # Calibration tools
+│   ├── case1_omni_current_playback/        # Case 1: omnidirectional current playback
+│   ├── case2_dual_magnet_trajectory/       # Case 2: dual-magnet trajectory control
+│   ├── case4_three_sphere_playback/        # Case 4: three-sphere current playback
+│   ├── case6_single_sphere_closed_loop/    # Case 6: single-sphere closed-loop control
+│   ├── case7_dual_microsphere_closed_loop/ # Case 7: dual-microsphere closed-loop control
+│   ├── basic_control/                      # Basic control utilities
+│   └── calibration/                        # Calibration tools
 └── README.md
 ```
 

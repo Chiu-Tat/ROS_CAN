@@ -1,0 +1,8 @@
+prefix=/home/dz/Documents/CUHK/ROS_CAN/devel
+
+Name: Case_2
+Description: Description of Case_2
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

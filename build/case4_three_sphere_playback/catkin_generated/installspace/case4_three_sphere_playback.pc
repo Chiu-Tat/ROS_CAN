@@ -1,0 +1,8 @@
+prefix=/home/dz/Documents/CUHK/ROS_CAN/install
+
+Name: case4_three_sphere_playback
+Description: Description of case4_three_sphere_playback
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
