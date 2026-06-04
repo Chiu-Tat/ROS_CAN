@@ -97,7 +97,7 @@ def build_device_current_message(current_mA):
 class CANBusHandler:
     """Handler for CAN bus operations."""
     
-    def __init__(self, channel="can0", bustype="socketcan"):
+    def __init__(self, channel="can0", bustype="socketcan", verbose_send=True):
         """
         Initialize CAN bus handler.
         
@@ -106,6 +106,7 @@ class CANBusHandler:
             bustype: CAN bus type (default: "socketcan")
         """
         self.bus = can.interface.Bus(channel=channel, bustype=bustype)
+        self.verbose_send = verbose_send
     
     def send_message(self, can_id, data):
         """
@@ -118,7 +119,8 @@ class CANBusHandler:
         try:
             message = can.Message(arbitration_id=can_id, data=data, is_extended_id=False)
             self.bus.send(message)
-            rospy.loginfo(f"Sent CAN message: ID={hex(can_id)}, Data={data}")
+            if self.verbose_send:
+                rospy.loginfo(f"Sent CAN message: ID={hex(can_id)}, Data={data}")
         except can.CanError as e:
             rospy.logerr(f"CAN error: {e}")
         except Exception as e:
@@ -187,4 +189,3 @@ class CANMessageBuilder:
         can_id = CANMessageDefs.DEVICE_IDS[device_index]
         data = build_device_current_message(current_mA)
         return can_id, data
-

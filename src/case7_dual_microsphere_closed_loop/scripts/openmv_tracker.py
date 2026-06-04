@@ -45,7 +45,10 @@ class OpenMVTracker(object):
         self.baudrate = rospy.get_param("~baudrate", 115200)
         self.frame_id = rospy.get_param("~frame_id", "openmv_camera")
         self.reconnect_delay_s = rospy.get_param("~reconnect_delay_s", 1.0)
+        self.transient_read_fail_limit = max(1, int(rospy.get_param("~transient_read_fail_limit", 3)))
+        self.suppress_usb_control_lines = rospy.get_param("~suppress_usb_control_lines", False)
         self.ser = None
+        self.transient_read_failures = 0
         self.calibration = {
             key: float(rospy.get_param("~" + key, value))
             for key, value in DEFAULT_CALIBRATION.items()
@@ -93,7 +96,14 @@ class OpenMVTracker(object):
                 self.ser = serial.Serial(exclusive=True, **kwargs)
             except TypeError:
                 self.ser = serial.Serial(**kwargs)
+            if self.suppress_usb_control_lines:
+                try:
+                    self.ser.dtr = False
+                    self.ser.rts = False
+                except Exception:
+                    pass
             self.ser.reset_input_buffer()
+            self.transient_read_failures = 0
             rospy.loginfo("Opened serial port: %s", self.ser.name)
             return True
         except serial.SerialException as exc:
@@ -125,11 +135,28 @@ class OpenMVTracker(object):
 
                 line = self.ser.readline()
                 if not line:
+                    rospy.logwarn_throttle(
+                        3.0,
+                        "No data from OpenMV on %s. Check that main.py is running on the camera and no IDE serial terminal is open.",
+                        self.serial_port,
+                    )
                     continue
                 text = line.decode("utf-8", errors="ignore").strip()
                 if text:
+                    self.transient_read_failures = 0
                     self._process_line(text)
             except (serial.SerialException, OSError) as exc:
+                if "returned no data" in str(exc):
+                    self.transient_read_failures += 1
+                    if self.transient_read_failures < self.transient_read_fail_limit:
+                        rospy.logwarn_throttle(
+                            2.0,
+                            "OpenMV serial returned no data once; keeping the port open (%d/%d)",
+                            self.transient_read_failures,
+                            self.transient_read_fail_limit,
+                        )
+                        rospy.sleep(0.1)
+                        continue
                 rospy.logerr_throttle(
                     2.0,
                     "OpenMV serial read failed: %s. Reconnecting; make sure only this ROS node is using the camera port.",
@@ -148,18 +175,40 @@ class OpenMVTracker(object):
             rospy.logwarn("Invalid JSON from OpenMV: %s (%s)", line[:80], exc)
             return
 
+        if isinstance(data, (int, float)):
+            fps_msg = Float32()
+            fps_msg.data = float(data)
+            self.pub["fps"].publish(fps_msg)
+            rospy.logdebug("Received numeric FPS-only OpenMV line: %.2f", fps_msg.data)
+            return
+
+        if not isinstance(data, dict):
+            rospy.logwarn_throttle(
+                2.0,
+                "Ignoring non-object JSON from OpenMV: %s",
+                line[:80],
+            )
+            return
+
         now = rospy.Time.now()
         if "fps" in data:
-            fps_msg = Float32()
-            fps_msg.data = float(data["fps"])
-            self.pub["fps"].publish(fps_msg)
+            try:
+                fps_msg = Float32()
+                fps_msg.data = float(data["fps"])
+                self.pub["fps"].publish(fps_msg)
+            except (TypeError, ValueError):
+                rospy.logwarn_throttle(2.0, "Ignoring invalid OpenMV fps value: %r", data["fps"])
 
         for color in ("red", "green"):
             blob = data.get(color)
             if not isinstance(blob, dict) or "x" not in blob or "y" not in blob:
                 continue
-            pixel_x = float(blob["x"])
-            pixel_y = float(blob["y"])
+            try:
+                pixel_x = float(blob["x"])
+                pixel_y = float(blob["y"])
+            except (TypeError, ValueError):
+                rospy.logwarn_throttle(2.0, "Ignoring invalid %s blob from OpenMV: %r", color, blob)
+                continue
             world_x, world_y = self._pixel_to_world(pixel_x, pixel_y)
 
             msg = PointStamped()

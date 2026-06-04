@@ -18,6 +18,12 @@ RESULTS_DIR = os.path.join(SCRIPT_DIR, "results")
 TRAJECTORY_PATH = os.path.join(SCRIPT_DIR, "trajectory_case7_two_microspheres.json")
 
 
+def as_bool(value):
+    if isinstance(value, str):
+        return value.strip().lower() in ("1", "true", "yes", "on")
+    return bool(value)
+
+
 def latest_position_csv():
     pattern = os.path.join(RESULTS_DIR, "sphere_positions_case7_*.csv")
     files = sorted(glob.glob(pattern), key=os.path.getmtime)
@@ -55,6 +61,8 @@ def read_positions(path):
         "m1_y": column("M1_Red_Y(m)"),
         "m2_x": column("M2_Green_X(m)"),
         "m2_y": column("M2_Green_Y(m)"),
+        "m1_target_index": column("M1_Target_Index"),
+        "m2_target_index": column("M2_Target_Index"),
     }
 
 
@@ -75,12 +83,26 @@ def read_reference(path):
         "duration": (points - 1) * dt_s,
         "dt_s": dt_s,
         "workspace_radius": float(settings["workspace_radius_m"]),
+        "time_based_reference": as_bool(settings.get("time_based_reference", False)),
     }
 
 
-def interpolate_reference(ref, times, sphere_key):
+def reference_positions(ref, positions, sphere_key):
     path = ref[sphere_key]
+    index_key = "%s_target_index" % sphere_key
+    target_indices = positions.get(index_key)
+    if not ref["time_based_reference"] and target_indices is not None:
+        valid = np.isfinite(target_indices)
+        if np.any(valid):
+            x = np.full_like(positions["time"], np.nan, dtype=float)
+            y = np.full_like(positions["time"], np.nan, dtype=float)
+            indices = np.clip(target_indices[valid].astype(int), 0, len(path) - 1)
+            x[valid] = path[indices, 0]
+            y[valid] = path[indices, 1]
+            return x, y
+
     ref_time = ref["time"]
+    times = positions["time"]
     clipped = np.clip(times, ref_time[0], ref_time[-1])
     x = np.interp(clipped, ref_time, path[:, 0])
     y = np.interp(clipped, ref_time, path[:, 1])
@@ -108,8 +130,8 @@ def error_stats(error_mm):
 
 def plot_results(positions, ref, output_path, title_suffix, show=False):
     time_s = positions["time"]
-    m1_ref_x, m1_ref_y = interpolate_reference(ref, time_s, "m1")
-    m2_ref_x, m2_ref_y = interpolate_reference(ref, time_s, "m2")
+    m1_ref_x, m1_ref_y = reference_positions(ref, positions, "m1")
+    m2_ref_x, m2_ref_y = reference_positions(ref, positions, "m2")
     m1_error = tracking_error_mm(positions["m1_x"], positions["m1_y"], m1_ref_x, m1_ref_y)
     m2_error = tracking_error_mm(positions["m2_x"], positions["m2_y"], m2_ref_x, m2_ref_y)
 
@@ -134,9 +156,24 @@ def plot_results(positions, ref, output_path, title_suffix, show=False):
     ax_xy.grid(True, linestyle=":", alpha=0.7)
     ax_xy.legend(fontsize=8)
 
-    ax_x.plot(ref["time"], ref["m1"][:, 0], color="#8b1d1d", linewidth=2, label="M1 x reference")
+    if ref["time_based_reference"]:
+        ref_plot_time = ref["time"]
+        m1_plot_x = ref["m1"][:, 0]
+        m1_plot_y = ref["m1"][:, 1]
+        m2_plot_x = ref["m2"][:, 0]
+        m2_plot_y = ref["m2"][:, 1]
+        ref_label_suffix = "reference"
+    else:
+        ref_plot_time = time_s
+        m1_plot_x = m1_ref_x
+        m1_plot_y = m1_ref_y
+        m2_plot_x = m2_ref_x
+        m2_plot_y = m2_ref_y
+        ref_label_suffix = "active target"
+
+    ax_x.plot(ref_plot_time, m1_plot_x, color="#8b1d1d", linewidth=2, label="M1 x %s" % ref_label_suffix)
     ax_x.plot(time_s, positions["m1_x"], "--", color="#e65c55", linewidth=1.2, label="M1 x actual")
-    ax_x.plot(ref["time"], ref["m2"][:, 0], color="#1f7a3a", linewidth=2, label="M2 x reference")
+    ax_x.plot(ref_plot_time, m2_plot_x, color="#1f7a3a", linewidth=2, label="M2 x %s" % ref_label_suffix)
     ax_x.plot(time_s, positions["m2_x"], "--", color="#55b96f", linewidth=1.2, label="M2 x actual")
     ax_x.set_title("X position vs time")
     ax_x.set_xlabel("time (s)")
@@ -144,9 +181,9 @@ def plot_results(positions, ref, output_path, title_suffix, show=False):
     ax_x.grid(True, linestyle=":", alpha=0.7)
     ax_x.legend(fontsize=8)
 
-    ax_y.plot(ref["time"], ref["m1"][:, 1], color="#8b1d1d", linewidth=2, label="M1 y reference")
+    ax_y.plot(ref_plot_time, m1_plot_y, color="#8b1d1d", linewidth=2, label="M1 y %s" % ref_label_suffix)
     ax_y.plot(time_s, positions["m1_y"], "--", color="#e65c55", linewidth=1.2, label="M1 y actual")
-    ax_y.plot(ref["time"], ref["m2"][:, 1], color="#1f7a3a", linewidth=2, label="M2 y reference")
+    ax_y.plot(ref_plot_time, m2_plot_y, color="#1f7a3a", linewidth=2, label="M2 y %s" % ref_label_suffix)
     ax_y.plot(time_s, positions["m2_y"], "--", color="#55b96f", linewidth=1.2, label="M2 y actual")
     ax_y.set_title("Y position vs time")
     ax_y.set_xlabel("time (s)")
@@ -202,7 +239,11 @@ def main():
     output_path = args.output or default_output_path(position_csv)
     positions = read_positions(position_csv)
     ref = read_reference(args.trajectory)
-    title_suffix = "\\n%s, reference %.1f s" % (os.path.basename(position_csv), ref["duration"])
+    if ref["time_based_reference"]:
+        mode_text = "time reference %.1f s" % ref["duration"]
+    else:
+        mode_text = "progress-based reference"
+    title_suffix = "\\n%s, %s" % (os.path.basename(position_csv), mode_text)
     plot_results(positions, ref, output_path, title_suffix, show=args.show)
 
 

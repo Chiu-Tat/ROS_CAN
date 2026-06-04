@@ -29,15 +29,32 @@ DEFAULT_SETTINGS = {
     "z_plane_m": -0.006,
     "current_limit_A": 15.0,
     "k_mag": 3e-4,
-    "drag_N_s_per_m": 6e-6,
+    "drag_N_s_per_m": 1.0,
     "dt_s": 0.025,
     "kp_N_per_m": 1e-6,
-    "kd_N_s_per_m": 6e-6,
+    "kd_N_s_per_m": 3e-6,
+    "min_desired_force_N": 5e-5,
+    "breakaway_force_N": 2e-4,
+    "max_desired_force_N": 6e-4,
     "target_radius_m": 0.0025,
-    "path_lookahead_index": 8,
-    "time_based_reference": True,
+    "target_settle_speed_m_per_s": 2e-4,
+    "stuck_speed_threshold_m_per_s": 1.5e-4,
+    "path_lookahead_index": 12,
+    "coupled_progress": True,
+    "max_target_advance_per_step": 1,
+    "progress_search_window_index": 40,
+    "progress_backtrack_index": 12,
+    "max_tracking_error_m": 0.006,
+    "max_current_step_A": 0.75,
+    "position_filter_alpha": 0.35,
+    "velocity_filter_alpha": 0.25,
+    "min_velocity_dt_s": 0.015,
+    "max_measured_speed_m_per_s": 0.025,
+    "desired_force_filter_alpha": 0.45,
+    "max_desired_force_step_N": 1.2e-4,
+    "time_based_reference": False,
     "force_regularization": 1e-16,
-    "smoothness": 1e-16,
+    "smoothness": 5e-16,
 }
 MU_OVER_4PI = 1e-7
 EPS = 1e-9
@@ -108,23 +125,51 @@ class ClosedLoopTrajectoryController:
             "last_time": None,
             "target_index": int(self.settings["path_lookahead_index"]),
             "desired_force": np.zeros(2),
+            "last_desired_force": np.zeros(2),
             "actual_force": np.zeros(2),
         }
 
     def _sphere_callback(self, msg, key):
         now = time.time()
-        pos = np.array([msg.point.x, msg.point.y], dtype=float) * self.position_scale
+        raw_pos = np.array([msg.point.x, msg.point.y], dtype=float) * self.position_scale
         with self.lock:
             state = self.states[key]
+            last_position = state["position"]
+            last_time = state["last_time"]
+            pos = raw_pos
+            dt = None
+            if last_position is not None and last_time is not None:
+                dt = now - last_time
+                pos = self._filtered_position(last_position, raw_pos, dt)
+
             if state["position"] is not None and state["last_time"] is not None:
-                dt = now - state["last_time"]
-                if dt > 1e-4:
-                    state["velocity"] = (pos - state["position"]) / dt
-            state["last_position"] = state["position"]
+                if dt is not None and dt >= self.settings["min_velocity_dt_s"]:
+                    measured_velocity = (pos - state["position"]) / dt
+                    state["velocity"] = self._filtered_velocity(state["velocity"], measured_velocity)
+
+            state["last_position"] = last_position
             state["position"] = pos
             state["last_time"] = now
             if self.recording_positions and self.control_start_time is not None:
                 self._record_position_snapshot_locked(now, key)
+
+    def _filtered_position(self, previous, raw_position, dt):
+        alpha = self.settings["position_filter_alpha"]
+        filtered = previous + alpha * (raw_position - previous)
+        max_step = self.settings["max_measured_speed_m_per_s"] * max(dt, self.settings["min_velocity_dt_s"])
+        delta = filtered - previous
+        norm = float(np.linalg.norm(delta))
+        if max_step > 0.0 and norm > max_step:
+            filtered = previous + delta * (max_step / norm)
+        return filtered
+
+    def _filtered_velocity(self, previous_velocity, measured_velocity):
+        max_speed = self.settings["max_measured_speed_m_per_s"]
+        speed = float(np.linalg.norm(measured_velocity))
+        if max_speed > 0.0 and speed > max_speed:
+            measured_velocity = measured_velocity * (max_speed / speed)
+        alpha = self.settings["velocity_filter_alpha"]
+        return previous_velocity + alpha * (measured_velocity - previous_velocity)
 
     def prepare_trajectory(self, filepath):
         rospy.loginfo("Loading Case 7 trajectory from %s", filepath)
@@ -144,7 +189,7 @@ class ClosedLoopTrajectoryController:
         }
         duration_s = self.reference_duration()
         rospy.loginfo(
-            "Loaded Case 7 trajectories: M1=%d points, M2=%d points, dt=%.4f s, duration=%.2f s, limit=%.3f A, z=%.4f m",
+            "Loaded Case 7 trajectories: M1=%d points, M2=%d points, dt=%.4f s, nominal path time=%.2f s, limit=%.3f A, z=%.4f m",
             len(self.trajectory_data["m1"]),
             len(self.trajectory_data["m2"]),
             self.settings["dt_s"],
@@ -229,13 +274,45 @@ class ClosedLoopTrajectoryController:
         settings["dt_s"] = min(0.2, max(0.001, float(settings["dt_s"])))
         settings["kp_N_per_m"] = max(0.0, float(settings["kp_N_per_m"]))
         settings["kd_N_s_per_m"] = max(0.0, float(settings["kd_N_s_per_m"]))
+        settings["min_desired_force_N"] = max(0.0, float(settings["min_desired_force_N"]))
+        settings["breakaway_force_N"] = max(0.0, float(settings["breakaway_force_N"]))
+        settings["max_desired_force_N"] = max(0.0, float(settings["max_desired_force_N"]))
         settings["target_radius_m"] = max(0.0002, float(settings["target_radius_m"]))
+        settings["target_settle_speed_m_per_s"] = max(0.0, float(settings["target_settle_speed_m_per_s"]))
+        settings["stuck_speed_threshold_m_per_s"] = max(0.0, float(settings["stuck_speed_threshold_m_per_s"]))
         settings["path_lookahead_index"] = max(0, int(settings["path_lookahead_index"]))
-        settings["time_based_reference"] = bool(settings["time_based_reference"])
+        settings["coupled_progress"] = self._as_bool(settings["coupled_progress"])
+        settings["max_target_advance_per_step"] = max(1, int(settings["max_target_advance_per_step"]))
+        settings["progress_search_window_index"] = max(1, int(settings["progress_search_window_index"]))
+        settings["progress_backtrack_index"] = max(0, int(settings["progress_backtrack_index"]))
+        settings["max_tracking_error_m"] = max(settings["target_radius_m"], float(settings["max_tracking_error_m"]))
+        settings["max_current_step_A"] = max(0.0, float(settings["max_current_step_A"]))
+        settings["position_filter_alpha"] = min(1.0, max(0.01, float(settings["position_filter_alpha"])))
+        settings["velocity_filter_alpha"] = min(1.0, max(0.01, float(settings["velocity_filter_alpha"])))
+        settings["min_velocity_dt_s"] = max(0.0, float(settings["min_velocity_dt_s"]))
+        settings["max_measured_speed_m_per_s"] = max(0.0, float(settings["max_measured_speed_m_per_s"]))
+        settings["desired_force_filter_alpha"] = min(1.0, max(0.01, float(settings["desired_force_filter_alpha"])))
+        settings["max_desired_force_step_N"] = max(0.0, float(settings["max_desired_force_step_N"]))
+        settings["time_based_reference"] = self._as_bool(settings["time_based_reference"])
         settings["force_regularization"] = max(0.0, float(settings["force_regularization"]))
         settings["smoothness"] = max(0.0, float(settings["smoothness"]))
         settings["z_plane_m"] = float(settings["z_plane_m"])
+        self._warn_if_unreasonable_settings(settings)
         return settings
+
+    def _as_bool(self, value):
+        if isinstance(value, str):
+            return value.strip().lower() in ("1", "true", "yes", "on")
+        return bool(value)
+
+    def _warn_if_unreasonable_settings(self, settings):
+        if settings["kp_N_per_m"] > 1e-1 or settings["kd_N_s_per_m"] > 1e-2:
+            rospy.logwarn(
+                "Case 7 controller gains look too large for the force model: Kp=%.3g, Kd=%.3g. "
+                "Very large values can saturate all coils.",
+                settings["kp_N_per_m"],
+                settings["kd_N_s_per_m"],
+            )
 
     def start_control(self):
         if self.control_running:
@@ -247,6 +324,8 @@ class ClosedLoopTrajectoryController:
         with self.lock:
             for key in self.states:
                 self.states[key]["target_index"] = int(self.settings["path_lookahead_index"])
+                self.states[key]["velocity"] = np.zeros(2)
+                self.states[key]["last_desired_force"] = np.zeros(2)
 
         self.currents = np.zeros(10)
         self.results_data = []
@@ -310,17 +389,24 @@ class ClosedLoopTrajectoryController:
 
             force_targets = []
             target_points = {}
-            all_done = elapsed >= self.reference_duration()
+            target_indices = self._target_indices_for_states(states, elapsed)
+            all_done = True
+            if self.settings["time_based_reference"]:
+                all_done = elapsed >= self.reference_duration()
 
             for key in ("m1", "m2"):
                 path = self.trajectory_data[key]
                 position = states[key]["position"]
-                if self.settings["time_based_reference"]:
-                    target_index = self._time_based_target_index(elapsed, path)
-                else:
-                    target_index = self._advance_target(path, position, states[key]["target_index"])
+                target_index = target_indices[key]
                 target = path[min(target_index, len(path) - 1)]
-                desired_force = self._desired_force(position, states[key]["velocity"], target)
+                final_target = target_index >= len(path) - 1
+                desired_force = self._desired_force(
+                    position,
+                    states[key]["velocity"],
+                    target,
+                    enable_progress_force=not final_target,
+                )
+                desired_force = self._filtered_desired_force(key, desired_force)
                 force_targets.append({"position": position, "desired_force": desired_force})
                 target_points[key] = target
 
@@ -328,10 +414,21 @@ class ClosedLoopTrajectoryController:
                     self.states[key]["target_index"] = target_index
                     self.states[key]["desired_force"] = desired_force
 
-                if not self.settings["time_based_reference"] and target_index < len(path) - 1:
-                    all_done = False
+                if not self.settings["time_based_reference"]:
+                    final_target = target_index >= len(path) - 1
+                    target_error = float(np.linalg.norm(target - position))
+                    if not final_target or target_error > self.settings["target_radius_m"]:
+                        all_done = False
 
             solution = self._solve_currents_for_targets(force_targets, self.currents)
+            limited_currents = self._limit_current_step(solution["currents"], self.currents)
+            if not np.allclose(limited_currents, solution["currents"]):
+                limited_score = self._score_currents(limited_currents, force_targets, self.currents)
+                solution = {
+                    "currents": limited_currents,
+                    "forces": limited_score["forces"],
+                    "error": limited_score["error"],
+                }
             self.currents = solution["currents"]
 
             for index, key in enumerate(("m1", "m2")):
@@ -414,20 +511,97 @@ class ClosedLoopTrajectoryController:
 
     def _advance_target(self, path, position, target_index):
         target_index = min(max(int(target_index), 0), len(path) - 1)
-        while target_index < len(path) - 1:
-            target = path[target_index]
-            if np.linalg.norm(target - position) >= self.settings["target_radius_m"]:
-                break
-            target_index += 1
-        return target_index
+        current_error = float(np.linalg.norm(path[target_index] - position))
+        if current_error > self.settings["max_tracking_error_m"]:
+            return target_index
+
+        search_start = max(0, target_index - self.settings["progress_backtrack_index"])
+        search_stop = min(
+            len(path) - 1,
+            target_index + self.settings["progress_search_window_index"],
+        )
+        window = path[search_start:search_stop + 1]
+        nearest_offset = int(np.argmin(np.linalg.norm(window - position, axis=1)))
+        nearest_index = search_start + nearest_offset
+
+        lookahead_index = nearest_index + self.settings["path_lookahead_index"]
+        proposed_index = max(target_index, min(lookahead_index, len(path) - 1))
+        max_step_index = target_index + self.settings["max_target_advance_per_step"]
+        return min(proposed_index, max_step_index, len(path) - 1)
+
+    def _target_indices_for_states(self, states, elapsed):
+        if self.settings["time_based_reference"]:
+            return {
+                key: self._time_based_target_index(elapsed, self.trajectory_data[key])
+                for key in ("m1", "m2")
+            }
+
+        proposed = {
+            key: self._advance_target(
+                self.trajectory_data[key],
+                states[key]["position"],
+                states[key]["target_index"],
+            )
+            for key in ("m1", "m2")
+        }
+        if not self.settings["coupled_progress"]:
+            return proposed
+
+        shared_index = min(proposed["m1"], proposed["m2"])
+        return {"m1": shared_index, "m2": shared_index}
 
     def _time_based_target_index(self, elapsed, path):
         index = int(round(elapsed / self.settings["dt_s"]))
         return min(max(index, 0), len(path) - 1)
 
-    def _desired_force(self, position, velocity, target):
+    def _desired_force(self, position, velocity, target, enable_progress_force=True):
         error = target - position
-        return self.settings["kp_N_per_m"] * error - self.settings["kd_N_s_per_m"] * velocity
+        force = self.settings["kp_N_per_m"] * error - self.settings["kd_N_s_per_m"] * velocity
+        error_norm = float(np.linalg.norm(error))
+        norm = float(np.linalg.norm(force))
+
+        min_force = self.settings["min_desired_force_N"]
+        drag_force = self.settings["drag_N_s_per_m"] * self.settings["target_settle_speed_m_per_s"]
+        progress_force = min_force
+        speed = float(np.linalg.norm(velocity))
+        if speed < self.settings["stuck_speed_threshold_m_per_s"]:
+            progress_force = max(progress_force, drag_force, self.settings["breakaway_force_N"])
+        if (
+            enable_progress_force
+            and not self.settings["time_based_reference"]
+            and error_norm > 1e-6
+            and progress_force > 0.0
+            and norm < progress_force
+        ):
+            if norm > 1e-15:
+                force = force * (progress_force / norm)
+            elif error_norm > 1e-15:
+                force = error * (progress_force / error_norm)
+            norm = float(np.linalg.norm(force))
+
+        limit = self.settings["max_desired_force_N"]
+        if limit > 0.0 and norm > limit:
+            rospy.logwarn_throttle(
+                1.0,
+                "Case 7 desired force clipped from %.3e N to %.3e N; reduce Kp/Kd if this persists",
+                norm,
+                limit,
+            )
+            force = force * (limit / norm)
+        return force
+
+    def _filtered_desired_force(self, key, force):
+        with self.lock:
+            previous = self.states[key]["last_desired_force"]
+            alpha = self.settings["desired_force_filter_alpha"]
+            filtered = previous + alpha * (force - previous)
+            max_step = self.settings["max_desired_force_step_N"]
+            delta = filtered - previous
+            norm = float(np.linalg.norm(delta))
+            if max_step > 0.0 and norm > max_step:
+                filtered = previous + delta * (max_step / norm)
+            self.states[key]["last_desired_force"] = filtered
+            return filtered.copy()
 
     def _solve_currents_for_targets(self, targets, previous_currents):
         limit = self.settings["current_limit_A"]
@@ -451,6 +625,13 @@ class ClosedLoopTrajectoryController:
                     best = local_best
 
         return {"currents": currents, "forces": best["forces"], "error": best["error"]}
+
+    def _limit_current_step(self, desired_currents, previous_currents):
+        max_step = self.settings["max_current_step_A"]
+        if max_step <= 0.0:
+            return desired_currents
+        delta = np.clip(desired_currents - previous_currents, -max_step, max_step)
+        return previous_currents + delta
 
     def _score_currents(self, currents, targets, previous_currents):
         force_error = 0.0
@@ -529,7 +710,7 @@ class ClosedLoopTrajectoryController:
             "bx_dx": c * (3.0 * dot / r5 + 6.0 * dx * m0 / r5 - 15.0 * dx * dx * dot / r7),
             "bx_dy": c * (3.0 * dx * m1 / r5 + 3.0 * m0 * dy / r5 - 15.0 * dx * dy * dot / r7),
             "bx_dz": c * (3.0 * dx * m2 / r5 + 3.0 * m0 * dz / r5 - 15.0 * dx * dz * dot / r7),
-            "by_dy": c * (3.0 * dot / r5 + 3.0 * dy * m1 / r5 - 15.0 * dy * dy * dot / r7),
+            "by_dy": c * (3.0 * dot / r5 + 6.0 * dy * m1 / r5 - 15.0 * dy * dy * dot / r7),
             "by_dz": c * (3.0 * dy * m2 / r5 + 3.0 * m1 * dz / r5 - 15.0 * dy * dz * dot / r7),
         }
 

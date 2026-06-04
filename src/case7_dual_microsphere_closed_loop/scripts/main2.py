@@ -15,7 +15,6 @@ from can_lib import CANBusHandler, CANMessageBuilder, CANMessageDefs, can_to_cur
 from closed_loop_control import ClosedLoopTrajectoryController
 
 
-CASE7_REFERENCE_DURATION_S = 20.0
 CASE7_CONTROL_DT_S = 0.025
 CASE7_CURRENT_LIMIT_A = 15.0
 CASE7_CURRENT_LIMIT_MA = int(CASE7_CURRENT_LIMIT_A * 1000.0)
@@ -28,7 +27,11 @@ class CANApp(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         rospy.init_node("case7_can_gui_node", anonymous=True)
-        self.can_handler = CANBusHandler(channel="can0", bustype="socketcan")
+        self.can_handler = CANBusHandler(
+            channel="can0",
+            bustype="socketcan",
+            verbose_send=rospy.get_param("~verbose_can", False),
+        )
 
         self.ui.pushButton_Reset.clicked.connect(self.reset_devices)
         self.ui.pushButton_ModeSet.clicked.connect(self.mode_set)
@@ -127,7 +130,7 @@ class CANApp(QtWidgets.QMainWindow):
                 topic_m1=rospy.get_param("~topic_m1", "/sphere/red"),
                 topic_m2=rospy.get_param("~topic_m2", "/sphere/green"),
                 position_scale=rospy.get_param("~position_scale", 1.0),
-                reference_duration_s=rospy.get_param("~reference_duration_s", CASE7_REFERENCE_DURATION_S),
+                reference_duration_s=None,
                 control_dt_s=rospy.get_param("~control_dt_s", CASE7_CONTROL_DT_S),
             )
 

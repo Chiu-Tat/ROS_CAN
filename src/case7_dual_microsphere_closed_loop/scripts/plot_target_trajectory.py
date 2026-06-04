@@ -108,7 +108,7 @@ def main():
         "dt = %.3f s, points = %d\n"
         "z = %.3f m\n"
         "I limit = +/-%.1f A\n"
-        "Kp = %.1f, Kd = %.1f\n"
+        "Kp = %.3g, Kd = %.3g\n"
         "target radius = %.4f m"
     ) % (
         duration_s,
