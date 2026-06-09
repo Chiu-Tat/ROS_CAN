@@ -111,3 +111,10 @@
 /home/dz/Documents/CUHK/ROS_CAN/build/case7_dual_microsphere_closed_loop/CMakeFiles/geometry_msgs_generate_messages_lisp.dir
 /home/dz/Documents/CUHK/ROS_CAN/build/case7_dual_microsphere_closed_loop/CMakeFiles/geometry_msgs_generate_messages_eus.dir
 /home/dz/Documents/CUHK/ROS_CAN/build/case7_dual_microsphere_closed_loop/CMakeFiles/geometry_msgs_generate_messages_cpp.dir
+/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/CMakeFiles/install/strip.dir
+/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/CMakeFiles/install/local.dir
+/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/CMakeFiles/install.dir
+/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/CMakeFiles/list_install_components.dir
+/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/CMakeFiles/rebuild_cache.dir
+/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/CMakeFiles/edit_cache.dir
+/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/CMakeFiles/test.dir

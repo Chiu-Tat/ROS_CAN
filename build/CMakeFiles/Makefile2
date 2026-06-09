@@ -62,6 +62,7 @@ all: case2_dual_magnet_trajectory/all
 all: case4_three_sphere_playback/all
 all: case6_single_sphere_closed_loop/all
 all: case7_dual_microsphere_closed_loop/all
+all: case8_two_dof_laser_arm_control/all
 
 .PHONY : all
 
@@ -75,6 +76,7 @@ preinstall: case2_dual_magnet_trajectory/preinstall
 preinstall: case4_three_sphere_playback/preinstall
 preinstall: case6_single_sphere_closed_loop/preinstall
 preinstall: case7_dual_microsphere_closed_loop/preinstall
+preinstall: case8_two_dof_laser_arm_control/preinstall
 
 .PHONY : preinstall
 
@@ -93,6 +95,7 @@ clean: case2_dual_magnet_trajectory/clean
 clean: case4_three_sphere_playback/clean
 clean: case6_single_sphere_closed_loop/clean
 clean: case7_dual_microsphere_closed_loop/clean
+clean: case8_two_dof_laser_arm_control/clean
 
 .PHONY : clean
 
@@ -257,6 +260,24 @@ case7_dual_microsphere_closed_loop/clean: case7_dual_microsphere_closed_loop/CMa
 case7_dual_microsphere_closed_loop/clean: case7_dual_microsphere_closed_loop/CMakeFiles/geometry_msgs_generate_messages_cpp.dir/clean
 
 .PHONY : case7_dual_microsphere_closed_loop/clean
+
+#=============================================================================
+# Directory level rules for directory case8_two_dof_laser_arm_control
+
+# Recursive "all" directory target.
+case8_two_dof_laser_arm_control/all:
+
+.PHONY : case8_two_dof_laser_arm_control/all
+
+# Recursive "preinstall" directory target.
+case8_two_dof_laser_arm_control/preinstall:
+
+.PHONY : case8_two_dof_laser_arm_control/preinstall
+
+# Recursive "clean" directory target.
+case8_two_dof_laser_arm_control/clean:
+
+.PHONY : case8_two_dof_laser_arm_control/clean
 
 #=============================================================================
 # Directory level rules for directory gtest

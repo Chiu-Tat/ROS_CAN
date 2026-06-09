@@ -36,6 +36,10 @@ list(APPEND CATKIN_ORDERED_PACKAGES "case7_dual_microsphere_closed_loop")
 list(APPEND CATKIN_ORDERED_PACKAGE_PATHS "case7_dual_microsphere_closed_loop")
 list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "False")
 list(APPEND CATKIN_ORDERED_PACKAGES_BUILD_TYPE "catkin")
+list(APPEND CATKIN_ORDERED_PACKAGES "case8_two_dof_laser_arm_control")
+list(APPEND CATKIN_ORDERED_PACKAGE_PATHS "case8_two_dof_laser_arm_control")
+list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "False")
+list(APPEND CATKIN_ORDERED_PACKAGES_BUILD_TYPE "catkin")
 
 set(CATKIN_MESSAGE_GENERATORS )
 

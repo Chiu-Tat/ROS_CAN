@@ -1,0 +1,8 @@
+prefix=/home/dz/Documents/CUHK/ROS_CAN/install
+
+Name: case8_two_dof_laser_arm_control
+Description: Description of case8_two_dof_laser_arm_control
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

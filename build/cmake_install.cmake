@@ -154,6 +154,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/dz/Documents/CUHK/ROS_CAN/build/case4_three_sphere_playback/cmake_install.cmake")
   include("/home/dz/Documents/CUHK/ROS_CAN/build/case6_single_sphere_closed_loop/cmake_install.cmake")
   include("/home/dz/Documents/CUHK/ROS_CAN/build/case7_dual_microsphere_closed_loop/cmake_install.cmake")
+  include("/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/cmake_install.cmake")
 
 endif()
 
