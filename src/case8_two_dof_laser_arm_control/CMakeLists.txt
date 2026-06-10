@@ -13,3 +13,12 @@ catkin_package()
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+catkin_install_python(PROGRAMS
+  scripts/collect_data.py
+  scripts/train_model.py
+  scripts/evaluate_model.py
+  scripts/nn_closed_loop_control.py
+  scripts/mlp_model.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
