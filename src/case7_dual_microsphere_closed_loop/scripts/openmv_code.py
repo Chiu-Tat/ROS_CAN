@@ -26,8 +26,8 @@ clock = time.clock()
 
 # === DETECTION SETTINGS ===
 # OpenMV LAB thresholds. Tune these in OpenMV IDE for your actual lighting.
-RED_THRESHOLD = (20, 90, 20, 80, 0, 70)
-GREEN_THRESHOLD = (28, 72, -78, -18, -3, 43)
+RED_THRESHOLD = (20, 90, 20, 80, -20, 70)
+GREEN_THRESHOLD = (28, 72, -78, -14, -9, 43)
 
 MIN_ROUNDNESS = 0.5
 MIN_PIXELS = 50

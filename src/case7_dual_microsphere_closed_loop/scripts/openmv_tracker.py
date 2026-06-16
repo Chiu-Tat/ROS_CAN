@@ -40,7 +40,7 @@ class OpenMVTracker(object):
     def __init__(self):
         rospy.init_node("case7_openmv_sphere_tracker", anonymous=False)
 
-        self.requested_port = rospy.get_param("~port", "/dev/ttyACM1")
+        self.requested_port = rospy.get_param("~port", "/dev/ttyACM0")
         self.serial_port = self.requested_port
         self.baudrate = rospy.get_param("~baudrate", 115200)
         self.frame_id = rospy.get_param("~frame_id", "openmv_camera")

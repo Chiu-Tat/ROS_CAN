@@ -67,3 +67,78 @@ If the OpenMV tracker publishes pixels rather than calibrated meters, launch
 ```bash
 rosrun case7_dual_microsphere_closed_loop main2.py _position_scale:=0.001
 ```
+
+## Joystick teleoperation (`main_joystick.py`)
+
+`main_joystick.py` is an alternative GUI that drives the microspheres with an
+Xbox controller instead of a stored trajectory. It reuses the same soft-magnetic
+field/force model and current solver as the trajectory controller, but takes the
+desired movement *direction* from the right stick. It still needs the tracker
+running, because the closed-loop force depends on each sphere's measured
+position.
+
+Because both spheres share one ten-coil field, the controller (a) maps full
+stick deflection straight to the push force `joystick_force_N` (with light
+velocity damping) and (b) **weights the commanded sphere(s) above any held
+sphere** in the solver so your command is not diluted by the hold constraint and
+the solver does not over-fight to null the held sphere (which is what jitters
+it). In single-target mode the unselected sphere holds the position it had when
+you switched to it; in `both` mode the two spheres receive the same push, so they
+move together.
+
+> The soft-magnetic force is *quadratic* in coil current, so the solver's
+> current-smoothness penalty is **off by default**: any appreciable value
+> exceeds the tiny per-step force gains near zero current and stalls the solver,
+> leaving every coil at ~0 A. Use `~solver_smoothness` only with care.
+
+```bash
+rosrun case7_dual_microsphere_closed_loop openmv_tracker.py
+rosrun case7_dual_microsphere_closed_loop main_joystick.py
+```
+
+Then in the GUI press **Reset -> Mode Set -> Online Check**, and:
+
+- **Right stick** moves the selected microsphere(s).
+- **A button** switches the controlled target: `red -> green -> both -> red`.
+  The active target is printed on the terminal on every switch.
+
+The joystick is read straight from `/dev/input/jsX` (no pygame / ros-joy / evdev
+dependency). The gamepad is auto-detected; devices with no buttons (e.g. the
+laptop accelerometer) are skipped. Tunables are ROS params:
+
+```bash
+rosrun case7_dual_microsphere_closed_loop main_joystick.py \
+  _joystick_force_N:=6e-4 _joy_deadzone:=0.15 _joy_invert_y:=true
+```
+
+- `~joy_device` (default `""` = auto) — force a specific `/dev/input/jsX`.
+- `~joy_axis_x`, `~joy_axis_y` (default `3`, `4`) — right-stick axis indices.
+- `~joy_button_cycle` (default `0` = A) — target-switch button index.
+- `~joy_deadzone` (default `0.15`) — stick deadzone fraction.
+- `~joy_invert_x` / `~joy_invert_y` (default `false` / `true`) — flip an axis if
+  the sphere moves opposite to the stick (defaults map stick-up to `+y`).
+- `~joystick_force_N` (default `6e-4`) — push force magnitude at full deflection,
+  clamped to `max_desired_force_N` (raise both to push harder).
+- `~move_damping_N_s_per_m` (default `0.1`) — velocity damping on a driven
+  sphere; raise it if the sphere overshoots or oscillates.
+- `~move_weight` / `~hold_weight` (default `1.0` / `0.3`) — solver priority of a
+  commanded vs a held sphere. Raise `~hold_weight` toward `~move_weight` if the
+  held sphere drifts; lower it if the held sphere jitters or holding fights your
+  command too hard.
+- `~solver_smoothness` (default off) — penalty on per-step current changes. Off
+  by default because the quadratic force law makes any non-trivial value stall
+  the solver near zero current; leave it off unless you understand the risk.
+- `~solver_regularization` (default = JSON value) — penalty on total current.
+
+### Tuning the feel
+
+| Symptom | Knob |
+| --- | --- |
+| Driven sphere too weak / slow | raise `~joystick_force_N` (and JSON `max_desired_force_N`) |
+| Held sphere drifts toward the moving one | raise `~hold_weight` |
+| Held sphere jitters / jumps | lower `~hold_weight` (trades a little drift for less jitter) |
+| Driven sphere overshoots / oscillates | raise `~move_damping_N_s_per_m` |
+
+Physics settings (`k_mag`, `z_plane_m`, current limits, `kd`, slew limits) are
+loaded from `trajectory_case7_two_microspheres.json` so the field model matches
+the tuned trajectory case; if the file is missing it falls back to defaults.
