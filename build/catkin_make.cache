@@ -1,2 +1,2 @@
-ICRA2026:basic_control:calibration:case1_omni_current_playback:case2_dual_magnet_trajectory:case4_three_sphere_playback:case6_single_sphere_closed_loop:case7_dual_microsphere_closed_loop:case8_two_dof_laser_arm_control
+basic_control:calibration:case8_two_dof_laser_arm_control:case_study1_single_fixed_magnet
 -DCATKIN_DEVEL_PREFIX=/home/dz/Documents/CUHK/ROS_CAN/devel -DCMAKE_INSTALL_PREFIX=/home/dz/Documents/CUHK/ROS_CAN/install -G Unix Makefiles

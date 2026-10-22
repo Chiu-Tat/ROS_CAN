@@ -1,0 +1,20 @@
+<launch>
+  <arg name="layout" default="single"/>
+  <arg name="gui" default="true"/>
+  <arg name="record_ui" default="$(arg gui)"/>
+  <arg name="results_dir" default="$(eval find('case_study1_single_fixed_magnet') + '/results' + ('' if arg('layout') == 'single' else '/' + arg('layout')))"/>
+  <arg name="post_stop_record_s" default="15"/>
+  <arg name="gamepad" default="false"/>
+  <arg name="input_source" default="keyboard"/>
+  <include file="$(find case_study1_single_fixed_magnet)/launch/experiment.launch">
+    <arg name="layout" value="$(arg layout)"/>
+    <arg name="record_ui" value="$(arg record_ui)"/>
+    <arg name="results_dir" value="$(arg results_dir)"/>
+    <arg name="post_stop_record_s" value="$(arg post_stop_record_s)"/>
+    <arg name="hardware" value="false"/>
+    <arg name="simulate" value="true"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="gamepad" value="$(arg gamepad)"/>
+    <arg name="input_source" value="$(arg input_source)"/>
+  </include>
+</launch>

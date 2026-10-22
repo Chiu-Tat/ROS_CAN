@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "CS1 OpenMV: Upload and Restart",
+      "type": "process",
+      "command": "${workspaceFolder}/.venv/bin/mpremote",
+      "args": [
+        "connect",
+        "${input:openmvPort}",
+        "fs",
+        "cp",
+        "${workspaceFolder}/src/case_study1_single_fixed_magnet/scripts/openmv_code.py",
+        ":main.py",
+        "+",
+        "reset"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "CS1 OpenMV: Monitor Output",
+      "type": "process",
+      "command": "${workspaceFolder}/.venv/bin/mpremote",
+      "args": [
+        "connect",
+        "${input:openmvPort}",
+        "repl"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "CS1 OpenMV: Calibrate Camera",
+      "type": "process",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": [
+        "${workspaceFolder}/src/case_study1_single_fixed_magnet/scripts/camera_calibration_ui.py",
+        "--port",
+        "${input:openmvPort}"
+      ],
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "openmvPort",
+      "type": "promptString",
+      "description": "OpenMV serial port (stop the ROS tracker and disconnect IDE first)",
+      "default": "/dev/ttyACM0"
+    }
+  ]
+}

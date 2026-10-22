@@ -1,0 +1,5 @@
+{
+  "affine": null,
+  "frame_id": "emns_world",
+  "note": "Generate affine (2x3, pixels to meters) with calibrate_camera.py using measurements in the paper coil frame."
+}

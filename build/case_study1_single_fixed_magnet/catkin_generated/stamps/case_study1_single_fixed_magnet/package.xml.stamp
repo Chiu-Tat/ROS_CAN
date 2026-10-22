@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>case_study1_single_fixed_magnet</name>
+  <version>0.1.0</version>
+  <description>Case Study 1: shared manual control UI for Single, Gate and Triangle fixed-magnet layouts.</description>
+  <maintainer email="dz@todo.todo">Da Zhao</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>roslaunch</exec_depend>
+  <exec_depend>rosnode</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-scipy</exec_depend>
+  <exec_depend>python3-serial</exec_depend>
+  <exec_depend>python3-matplotlib</exec_depend>
+  <exec_depend>python3-pyqt5</exec_depend>
+  <exec_depend>python3-can</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+</package>

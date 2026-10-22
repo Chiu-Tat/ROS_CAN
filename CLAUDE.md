@@ -14,17 +14,30 @@ feedback from an **OpenMV camera** over serial and coil commands sent over a
 ## Build & run
 
 ```bash
+source /opt/ros/noetic/setup.bash
+source .venv/bin/activate    # Python 3.8, matching ROS Noetic and Qwt
 catkin_make                 # build all packages (run from workspace root)
 source devel/setup.bash     # load workspace into the shell after every build
 ```
 
-Each experiment is its own package under `src/` (`ICRA2026`, `case1_*` … `case8_*`,
-`basic_control`, `calibration`). A typical case runs as **two nodes**:
+Active packages under `src/` are `case_study1_single_fixed_magnet`, `case8_two_dof_laser_arm_control`,
+`basic_control`, and `calibration`. Historical experiments (`ICRA2026` and
+Cases 1, 2, 4, 6, and 7) are preserved under `archive/ros_packages/` and excluded
+from the active build. See `archive/README.md` for restoration instructions.
+A typical case runs as **two nodes**:
 
 ```bash
 rosrun <pkg> openmv_tracker.py   # reads OpenMV serial, publishes feedback topic(s)
 rosrun <pkg> main2.py            # Qt GUI; its OnlineCheck button starts closed-loop control
 ```
+
+Case Study 1 instead uses `roslaunch case_study1_single_fixed_magnet preview.launch`
+for a hardware-free preview, or its documented `experiment.launch` workflow.
+It has separate gamepad, line-tracker, controller, and TFW-panel nodes plus a
+catkin Python module (`cs1_experiment`). The cylinder line axis is directed by
+the user-supplied initial magnetic heading; tracking loss requires reinitializing.
+Read its README for the paper coordinate frame, model-in TFW limitations, and
+camera calibration before hardware operation. Retain Case 8 until instructed.
 
 `main.py` / `main2.py` are the GUI entry points (`main2.py` is the current one for
 the newer cases). `catkin_install_python` in each `CMakeLists.txt` marks the
@@ -82,9 +95,9 @@ Per-package `scripts/` modules (consistent across cases):
 for a run; the controller reads its tunables from there, so changing behavior
 often means editing the JSON, not the code.
 
-`ICRA2026` is the original/reference package and contains several
+`archive/ros_packages/ICRA2026` is the original/reference package and contains several
 work-in-progress controller variants (`closed_loop_control copy*.py`,
-`... kazhu*.py`); the live one is plain `closed_loop_control.py`.
+`... kazhu*.py`); its reference entry point is plain `closed_loop_control.py`.
 
 ## Conventions
 

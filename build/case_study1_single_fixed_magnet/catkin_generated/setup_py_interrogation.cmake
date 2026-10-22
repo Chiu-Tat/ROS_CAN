@@ -1,0 +1,7 @@
+set(case_study1_single_fixed_magnet_SETUP_PY_SETUP_MODULE "distutils.core")
+set(case_study1_single_fixed_magnet_SETUP_PY_VERSION "0.1.0")
+set(case_study1_single_fixed_magnet_SETUP_PY_SCRIPTS "")
+set(case_study1_single_fixed_magnet_SETUP_PY_PACKAGES "cs1_experiment")
+set(case_study1_single_fixed_magnet_SETUP_PY_PACKAGE_DIRS "src/cs1_experiment")
+set(case_study1_single_fixed_magnet_SETUP_PY_MODULES "")
+set(case_study1_single_fixed_magnet_SETUP_PY_MODULE_DIRS "")

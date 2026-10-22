@@ -1,0 +1,8 @@
+prefix=/home/dz/Documents/CUHK/ROS_CAN/install
+
+Name: case_study1_single_fixed_magnet
+Description: Description of case_study1_single_fixed_magnet
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

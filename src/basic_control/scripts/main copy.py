@@ -7,6 +7,7 @@ import can
 import csv
 import time
 import os
+from pathlib import Path
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.Qwt import QwtDial, QwtDialSimpleNeedle
 from PyQt5.QtGui import QColor
@@ -172,7 +173,12 @@ class CANApp(QtWidgets.QMainWindow):
             return
             
         # Load CSV data
-        csv_file_path = "/home/dz/Documents/CUHK/ROS_CAN/src/case1_omni_current_playback/scripts/coil_currents.csv"
+        workspace_root = Path(__file__).resolve().parents[3]
+        relative_csv = Path("case1_omni_current_playback/scripts/coil_currents.csv")
+        default_csv = workspace_root / "src" / relative_csv
+        if not default_csv.is_file():
+            default_csv = workspace_root / "archive" / "ros_packages" / relative_csv
+        csv_file_path = rospy.get_param("~playback_csv", str(default_csv))
         if not os.path.exists(csv_file_path):
             rospy.logerr(f"CSV file not found: {csv_file_path}")
             return

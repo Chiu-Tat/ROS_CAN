@@ -52,3 +52,23 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/case8_two_dof_laser_arm_control" TYPE FILE FILES "/home/dz/Documents/CUHK/ROS_CAN/src/case8_two_dof_laser_arm_control/package.xml")
 endif()
 
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/case8_two_dof_laser_arm_control" TYPE PROGRAM FILES "/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/catkin_generated/installspace/collect_data.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/case8_two_dof_laser_arm_control" TYPE PROGRAM FILES "/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/catkin_generated/installspace/train_model.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/case8_two_dof_laser_arm_control" TYPE PROGRAM FILES "/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/catkin_generated/installspace/evaluate_model.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/case8_two_dof_laser_arm_control" TYPE PROGRAM FILES "/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/catkin_generated/installspace/nn_closed_loop_control.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/case8_two_dof_laser_arm_control" TYPE PROGRAM FILES "/home/dz/Documents/CUHK/ROS_CAN/build/case8_two_dof_laser_arm_control/catkin_generated/installspace/mlp_model.py")
+endif()
+

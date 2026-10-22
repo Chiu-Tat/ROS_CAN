@@ -1,0 +1,222 @@
+{
+  "model": {
+    "z_m": 0.082,
+    "free_moment_Am2": 0.12,
+    "holding_field_T": 0.02,
+    "task_force_N": 0.1,
+    "current_limit_A": 15.0,
+    "coil_parameters": [
+      [
+        -13.04945069,
+        -4.41557229,
+        6.47376799,
+        0.12129096,
+        0.00466922,
+        0.0675158
+      ],
+      [
+        -5.10083416,
+        13.54294901,
+        7.85474539,
+        0.05834654,
+        -0.11165548,
+        0.06649454
+      ],
+      [
+        4.05088788,
+        14.23365818,
+        6.44760956,
+        -0.05903076,
+        -0.11020417,
+        0.07011756
+      ],
+      [
+        13.89011305,
+        -0.06092074,
+        4.77365608,
+        -0.12306086,
+        -0.00085745,
+        0.07121839
+      ],
+      [
+        11.44363813,
+        -9.40543896,
+        4.46367162,
+        -0.06806179,
+        0.1024875,
+        0.07102848
+      ],
+      [
+        -9.00577939,
+        -12.78905365,
+        5.98650851,
+        0.06473315,
+        0.10618968,
+        0.0698828
+      ],
+      [
+        0.92820081,
+        8.54965337,
+        8.72298349,
+        -0.00381254,
+        -0.08845466,
+        -0.00374662
+      ],
+      [
+        8.7302819,
+        -4.90773115,
+        7.00109937,
+        -0.07977306,
+        0.04481733,
+        -0.00036032
+      ],
+      [
+        -7.68962762,
+        -6.83258326,
+        8.12112247,
+        0.07498008,
+        0.04542436,
+        -0.00196975
+      ],
+      [
+        2.35614001,
+        -1.11370036,
+        14.00304846,
+        -0.00722183,
+        0.00029277,
+        -0.03982979
+      ]
+    ],
+    "interaction_radius_epsilon_m": 1e-09,
+    "layout": "triangle",
+    "fixed_magnets": [
+      {
+        "xy_m": [
+          0.0,
+          0.03
+        ],
+        "heading_rad": 0.0,
+        "moment_Am2": 0.075
+      },
+      {
+        "xy_m": [
+          -0.025980762113533156,
+          -0.015
+        ],
+        "heading_rad": 2.0943951023931953,
+        "moment_Am2": 0.075
+      },
+      {
+        "xy_m": [
+          0.025980762113533156,
+          -0.015
+        ],
+        "heading_rad": 4.1887902047863905,
+        "moment_Am2": 0.075
+      }
+    ]
+  },
+  "control": {
+    "rate_hz": 10.0,
+    "drive_force_N": 0.025,
+    "turn_rate_rad_s": 0.35,
+    "prediction_speed_m_s": 0.005,
+    "prediction_horizon_s": 0.5,
+    "position_margin_m": 0.0005,
+    "heading_margin_rad": 0.02,
+    "min_separation_m": 0.016,
+    "pose_timeout_s": 0.3,
+    "command_timeout_s": 0.3,
+    "max_pose_jump_m": 0.015,
+    "max_heading_jump_rad": 0.8,
+    "allocation_tolerance": 0.02,
+    "current_slew_A_s": 20.0
+  },
+  "camera": {
+    "port": "/dev/ttyACM0",
+    "baudrate": 115200
+  },
+  "tracking": {
+    "detector": "green_cylinder_v1",
+    "nominal_length_m": 0.011,
+    "nominal_diameter_m": 0.004,
+    "length_range_m": [
+      0.007,
+      0.015
+    ],
+    "diameter_range_m": [
+      0.002,
+      0.006
+    ],
+    "aspect_range": [
+      1.5,
+      5.5
+    ],
+    "min_green_pixels": 20,
+    "max_roundness": 0.6,
+    "max_axis_box_disagreement_rad": 0.45,
+    "initialization_frames": 3,
+    "max_heading_rate_rad_s": 15.0,
+    "heading_noise_allowance_rad": 0.12,
+    "initialization_max_shift_m": 0.002,
+    "initialization_max_axis_change_rad": 0.15,
+    "association_max_distance_m": 0.008,
+    "dropout_grace_s": 0.25,
+    "initialization_boundary_margin_rad": 0.05235987755982989
+  },
+  "pose_hold": {
+    "hardware_validated": false,
+    "position_kp_N_m": 0.5,
+    "position_kd_Ns_m": 0.05,
+    "max_force_N": 0.005,
+    "position_deadband_m": 0.001,
+    "heading_deadband_rad": 0.08,
+    "position_filter_tau_s": 0.15,
+    "velocity_filter_tau_s": 0.25,
+    "max_reference_lead_m": 0.003,
+    "max_position_error_m": 0.004,
+    "max_heading_error_rad": 0.6,
+    "startup_current_slew_A_s": 0.5,
+    "holding_current_slew_A_s": 10.0,
+    "startup_drift_limit_m": 0.003,
+    "startup_heading_limit_rad": 0.6,
+    "startup_timeout_s": 30.0,
+    "startup_settle_s": 0.5,
+    "drive_thrust_N": 0.1,
+    "coast_release_force_N": 0.01,
+    "startup_settle_speed_m_s": 0.002,
+    "startup_current_tolerance_A": 0.2
+  },
+  "controller": "field_steer",
+  "field_steer": {
+    "hardware_validated": false,
+    "align_current_slew_A_s": 10.0,
+    "current_slew_A_s": 20.0,
+    "align_timeout_s": 8.0,
+    "align_tolerance_rad": 0.17,
+    "align_settle_s": 0.5,
+    "align_current_tolerance_A": 0.2,
+    "max_heading_error_rad": 1.0,
+    "max_speed_m_s": 0.003,
+    "max_target_lead_m": 0.0015,
+    "max_axis_error_m": 0.008,
+    "axis_kp_N_m": 5.0,
+    "axis_ki_N_ms": 20.0,
+    "axis_kd_Ns_m": 0.6,
+    "max_axis_force_N": 0.06,
+    "max_integral_force_N": 0.05,
+    "position_filter_tau_s": 0.1,
+    "velocity_filter_tau_s": 0.2,
+    "integral_unwind_factor": 0.3,
+    "lateral_kp_N_m": 3.0,
+    "lateral_ki_N_ms": 5.0,
+    "lateral_kd_Ns_m": 0.3,
+    "max_lateral_force_N": 0.01,
+    "max_lateral_integral_force_N": 0.008,
+    "max_lateral_error_m": 0.008,
+    "hold_deadband_m": 0.0015,
+    "breakaway_speed_factor": 2.0,
+    "max_hold_force_N": 0.008,
+    "coast_stop_speed_m_s": 0.0015
+  }
+}

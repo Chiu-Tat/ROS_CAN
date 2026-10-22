@@ -1,0 +1,166 @@
+{
+  "source_workspace_file": "revised_case_studies/results/cs1/tfw3d_fine/tfw3d_triangle.json",
+  "source_workspace_sha256": "dd507c91ed9f4eb35d3a03507d9e12e79fa7d9d7728720495d6fafeaa6f392fe",
+  "asset_file": "tfw_triangle.npz",
+  "source_model_file": "emns/workspace/fast.py",
+  "source_model_sha256": "ffbbe427c5c32cf1d0f4c0f1df79166dfe3d4cb054c8bd61cab826eec1b314a8",
+  "source_generator_file": "revised_case_studies/cs1_cylinder_interaction/run_tfw3d_fine.py",
+  "source_generator_sha256": "8aeed5cfc807322c886932e4db3e82fd497bc293bfe3347fe6fb13cb605a6d9d",
+  "source_classifier_sha256": {
+    "cases/case_6_interaction_obstacle_avoidance/workspace_hybrid.py": "19f0b289214296d84a8afb83ea72981a76267941d878b72fb1efad1c05614542",
+    "emns/workspace/affine.py": "6d21518e6072e669126a60c10fa22865caad818059c6c9761fd5b600e3a21a2e",
+    "hybrid_region/certificates.py": "040453698bce9a1a162a247baf75962863b86588261a7af006297dbbdb3e9ec7"
+  },
+  "model": {
+    "z_m": 0.082,
+    "free_moment_Am2": 0.12,
+    "holding_field_T": 0.02,
+    "task_force_N": 0.1,
+    "current_limit_A": 15.0,
+    "coil_parameters": [
+      [
+        -13.04945069,
+        -4.41557229,
+        6.47376799,
+        0.12129096,
+        0.00466922,
+        0.0675158
+      ],
+      [
+        -5.10083416,
+        13.54294901,
+        7.85474539,
+        0.05834654,
+        -0.11165548,
+        0.06649454
+      ],
+      [
+        4.05088788,
+        14.23365818,
+        6.44760956,
+        -0.05903076,
+        -0.11020417,
+        0.07011756
+      ],
+      [
+        13.89011305,
+        -0.06092074,
+        4.77365608,
+        -0.12306086,
+        -0.00085745,
+        0.07121839
+      ],
+      [
+        11.44363813,
+        -9.40543896,
+        4.46367162,
+        -0.06806179,
+        0.1024875,
+        0.07102848
+      ],
+      [
+        -9.00577939,
+        -12.78905365,
+        5.98650851,
+        0.06473315,
+        0.10618968,
+        0.0698828
+      ],
+      [
+        0.92820081,
+        8.54965337,
+        8.72298349,
+        -0.00381254,
+        -0.08845466,
+        -0.00374662
+      ],
+      [
+        8.7302819,
+        -4.90773115,
+        7.00109937,
+        -0.07977306,
+        0.04481733,
+        -0.00036032
+      ],
+      [
+        -7.68962762,
+        -6.83258326,
+        8.12112247,
+        0.07498008,
+        0.04542436,
+        -0.00196975
+      ],
+      [
+        2.35614001,
+        -1.11370036,
+        14.00304846,
+        -0.00722183,
+        0.00029277,
+        -0.03982979
+      ]
+    ],
+    "interaction_radius_epsilon_m": 1e-09,
+    "layout": "triangle",
+    "fixed_magnets": [
+      {
+        "xy_m": [
+          0.0,
+          0.03
+        ],
+        "heading_rad": 0.0,
+        "moment_Am2": 0.075
+      },
+      {
+        "xy_m": [
+          -0.025980762113533156,
+          -0.015
+        ],
+        "heading_rad": 2.0943951023931953,
+        "moment_Am2": 0.075
+      },
+      {
+        "xy_m": [
+          0.025980762113533156,
+          -0.015
+        ],
+        "heading_rad": 4.1887902047863905,
+        "moment_Am2": 0.075
+      }
+    ]
+  },
+  "protocol": {
+    "z_m": 0.082,
+    "free_m": 0.12,
+    "layout": "triangle",
+    "task": [
+      "By=0",
+      "Bz=0.02",
+      "fy=0",
+      "fz=\u00b10.1"
+    ],
+    "current_A": [
+      -15.0,
+      15.0
+    ],
+    "note": "Corrected dBy/dy; 0.781 mm x 5.625 deg stop; initial grid 16 x 16 x 64."
+  },
+  "inside_box_count": 259771,
+  "source_box_counts": {
+    "in_workspace": 259771,
+    "out_of_workspace": 273,
+    "undetermined": 325173
+  },
+  "stopping_widths": {
+    "x_m": 0.00078125,
+    "y_m": 0.00078125,
+    "heading_rad": 0.09817477042468103
+  },
+  "source_volume_fraction": {
+    "in_workspace": 0.6896276473999025,
+    "out_of_workspace": 0.00026321411132812516,
+    "undetermined": 0.31010913848876953
+  },
+  "qualification": "Fine corrected-dBy/dy model-in boxes. Conditional on the coil/dipole model; custom affine backend is not outward-rounded throughout. No hardware invariance guarantee.",
+  "asset_sha256": "f88e37f182203f86c7f9e1e3c9b12d7e2bae0b30415b687657bf867efe797c89",
+  "supersedes": null
+}
