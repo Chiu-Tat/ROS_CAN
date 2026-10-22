@@ -175,6 +175,15 @@ class GreenTrackingTests(unittest.TestCase):
             self.tracker.process(frame(self.sequence,150))
         self.assertIsNone(self.tracker.heading)
 
+    def test_laser_camera_frame_reports_wrong_camera(self):
+        import json as _json
+        self.tracker.port = '/dev/ttyACM0'
+        self.tracker.process({'sequence':999, 'laser':{'x':1,'y':2}, 'fps':50, 't':3})
+        self.assertIsNone(self.tracker.heading)
+        status = _json.loads(self.tracker.status_pub.publish.call_args[0][0].data)
+        self.assertIn('Wrong camera on /dev/ttyACM0', status['reason'])
+        self.assertIn('laser (Case 8) camera', status['reason'])
+
     def test_dimension_mismatch_and_overflow_are_rejected(self):
         for key, value in [('image_size_px',[640,480]),('detection_overflow',True)]:
             data = frame(self.sequence+1)

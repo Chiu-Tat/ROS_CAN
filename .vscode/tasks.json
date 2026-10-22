@@ -44,8 +44,8 @@
     {
       "id": "openmvPort",
       "type": "promptString",
-      "description": "OpenMV serial port (stop the ROS tracker and disconnect IDE first)",
-      "default": "/dev/ttyACM0"
+      "description": "CS1 OpenMV port (stable USB id; ttyACM0/1 can swap and one is the Case 8 laser camera). Stop the ROS tracker and disconnect IDE first",
+      "default": "/dev/serial/by-id/usb-OpenMV_OpenMV_Virtual_Comm_Port_in_FS_Mode_395338793033-if01"
     }
   ]
 }

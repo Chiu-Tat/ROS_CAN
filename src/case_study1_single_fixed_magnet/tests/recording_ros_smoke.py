@@ -60,7 +60,7 @@ def main():
             # Recording continues after control stops (to capture e.g. the
             # free magnet snapping onto the fixed one).
             wait_for(lambda:not panel.state.get('armed') and panel.recorder.in_post_stop(),timeout=5)
-            assert 'AFTER STOP' in panel.recorder.label.text(),panel.recorder.label.text()
+            assert 'Finishing recording' in panel.recorder.label.text(),panel.recorder.label.text()
             assert panel.recorder.stop_now_button.isVisible()
             stopped_at=time.monotonic()
             if not keep:  # end the post-stop recording early

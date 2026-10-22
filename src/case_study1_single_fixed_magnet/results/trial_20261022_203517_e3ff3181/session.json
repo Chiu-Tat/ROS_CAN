@@ -1,0 +1,495 @@
+{
+  "layout": "single",
+  "hardware": true,
+  "input_source": "keyboard",
+  "can_channel": "can0",
+  "configuration": {
+    "model": {
+      "z_m": 0.082,
+      "free_moment_Am2": 0.12,
+      "fixed_xy_m": [
+        0.02,
+        0.0
+      ],
+      "fixed_heading_rad": 1.5707963267948966,
+      "fixed_moment_Am2": 0.145,
+      "holding_field_T": 0.02,
+      "task_force_N": 0.1,
+      "current_limit_A": 15.0,
+      "coil_parameters": [
+        [
+          -13.04945069,
+          -4.41557229,
+          6.47376799,
+          0.12129096,
+          0.00466922,
+          0.0675158
+        ],
+        [
+          -5.10083416,
+          13.54294901,
+          7.85474539,
+          0.05834654,
+          -0.11165548,
+          0.06649454
+        ],
+        [
+          4.05088788,
+          14.23365818,
+          6.44760956,
+          -0.05903076,
+          -0.11020417,
+          0.07011756
+        ],
+        [
+          13.89011305,
+          -0.06092074,
+          4.77365608,
+          -0.12306086,
+          -0.00085745,
+          0.07121839
+        ],
+        [
+          11.44363813,
+          -9.40543896,
+          4.46367162,
+          -0.06806179,
+          0.1024875,
+          0.07102848
+        ],
+        [
+          -9.00577939,
+          -12.78905365,
+          5.98650851,
+          0.06473315,
+          0.10618968,
+          0.0698828
+        ],
+        [
+          0.92820081,
+          8.54965337,
+          8.72298349,
+          -0.00381254,
+          -0.08845466,
+          -0.00374662
+        ],
+        [
+          8.7302819,
+          -4.90773115,
+          7.00109937,
+          -0.07977306,
+          0.04481733,
+          -0.00036032
+        ],
+        [
+          -7.68962762,
+          -6.83258326,
+          8.12112247,
+          0.07498008,
+          0.04542436,
+          -0.00196975
+        ],
+        [
+          2.35614001,
+          -1.11370036,
+          14.00304846,
+          -0.00722183,
+          0.00029277,
+          -0.03982979
+        ]
+      ],
+      "interaction_radius_epsilon_m": 1e-09
+    },
+    "control": {
+      "rate_hz": 10.0,
+      "drive_force_N": 0.025,
+      "turn_rate_rad_s": 0.35,
+      "prediction_speed_m_s": 0.005,
+      "prediction_horizon_s": 0.5,
+      "position_margin_m": 0.0005,
+      "heading_margin_rad": 0.02,
+      "min_separation_m": 0.016,
+      "pose_timeout_s": 0.3,
+      "command_timeout_s": 0.3,
+      "max_pose_jump_m": 0.015,
+      "max_heading_jump_rad": 0.8,
+      "allocation_tolerance": 0.02,
+      "current_slew_A_s": 20.0
+    },
+    "camera": {
+      "port": "/dev/serial/by-id/usb-OpenMV_OpenMV_Virtual_Comm_Port_in_FS_Mode_395338793033-if01",
+      "baudrate": 115200
+    },
+    "tracking": {
+      "detector": "green_cylinder_v1",
+      "nominal_length_m": 0.011,
+      "nominal_diameter_m": 0.004,
+      "length_range_m": [
+        0.007,
+        0.015
+      ],
+      "diameter_range_m": [
+        0.002,
+        0.006
+      ],
+      "aspect_range": [
+        1.5,
+        5.5
+      ],
+      "min_green_pixels": 20,
+      "max_roundness": 0.6,
+      "max_axis_box_disagreement_rad": 0.45,
+      "initialization_frames": 3,
+      "max_heading_rate_rad_s": 15.0,
+      "heading_noise_allowance_rad": 0.12,
+      "initialization_max_shift_m": 0.002,
+      "initialization_max_axis_change_rad": 0.15,
+      "association_max_distance_m": 0.008,
+      "dropout_grace_s": 0.25,
+      "initialization_boundary_margin_rad": 0.05235987755982989
+    },
+    "pose_hold": {
+      "hardware_validated": true,
+      "position_kp_N_m": 0.5,
+      "position_kd_Ns_m": 0.05,
+      "max_force_N": 0.005,
+      "position_deadband_m": 0.001,
+      "heading_deadband_rad": 0.08,
+      "position_filter_tau_s": 0.15,
+      "velocity_filter_tau_s": 0.25,
+      "max_reference_lead_m": 0.003,
+      "max_position_error_m": 0.004,
+      "max_heading_error_rad": 0.6,
+      "startup_current_slew_A_s": 0.5,
+      "holding_current_slew_A_s": 10.0,
+      "startup_drift_limit_m": 0.003,
+      "startup_heading_limit_rad": 0.6,
+      "startup_timeout_s": 30.0,
+      "startup_settle_s": 0.5,
+      "drive_thrust_N": 0.1,
+      "coast_release_force_N": 0.01,
+      "startup_settle_speed_m_s": 0.002,
+      "startup_current_tolerance_A": 0.2
+    },
+    "controller": "field_steer",
+    "field_steer": {
+      "hardware_validated": true,
+      "align_current_slew_A_s": 10.0,
+      "current_slew_A_s": 20.0,
+      "align_timeout_s": 8.0,
+      "align_tolerance_rad": 0.17,
+      "align_settle_s": 0.5,
+      "align_current_tolerance_A": 0.2,
+      "max_heading_error_rad": 1.0,
+      "max_speed_m_s": 0.003,
+      "max_target_lead_m": 0.0015,
+      "max_axis_error_m": 0.008,
+      "axis_kp_N_m": 5.0,
+      "axis_ki_N_ms": 20.0,
+      "axis_kd_Ns_m": 0.6,
+      "max_axis_force_N": 0.06,
+      "max_integral_force_N": 0.05,
+      "position_filter_tau_s": 0.1,
+      "velocity_filter_tau_s": 0.2,
+      "integral_unwind_factor": 0.3,
+      "lateral_kp_N_m": 3.0,
+      "lateral_ki_N_ms": 5.0,
+      "lateral_kd_Ns_m": 0.3,
+      "max_lateral_force_N": 0.01,
+      "max_lateral_integral_force_N": 0.008,
+      "max_lateral_error_m": 0.008,
+      "hold_deadband_m": 0.0015,
+      "breakaway_speed_factor": 2.0,
+      "max_hold_force_N": 0.008,
+      "coast_stop_speed_m_s": 0.0015
+    }
+  },
+  "calibration": {
+    "affine": [
+      [
+        3.5850869711265074e-06,
+        0.0005655526613696383,
+        -0.07490362784172182
+      ],
+      [
+        0.0005692217045395454,
+        -6.791526468844563e-08,
+        -0.0923321576091365
+      ]
+    ],
+    "frame_id": "emns_world",
+    "rms_error_m": 0.0007774769271902824,
+    "max_error_m": 0.0007944507846773993,
+    "points": [
+      [
+        249.145390070922,
+        218.22340425531914,
+        0.05,
+        0.05
+      ],
+      [
+        75.30141843971631,
+        221.40070921985816,
+        0.05,
+        -0.05
+      ],
+      [
+        73.48581560283688,
+        42.56382978723404,
+        -0.05,
+        -0.05
+      ],
+      [
+        250.96099290780143,
+        43.47163120567376,
+        -0.05,
+        0.05
+      ]
+    ],
+    "image_size_px": [
+      320,
+      240
+    ],
+    "heading_checks": [],
+    "created_at": "2026-10-22T20:12:38.643831+08:00",
+    "angle_convention": "EM +x = 0 deg, +y = 90 deg; magnetic direction initialized manually",
+    "source": "openmv_usb"
+  },
+  "tfw_provenance": {
+    "source_workspace_file": "revised_case_studies/results/cs1/tfw3d_fine/tfw3d_single.json",
+    "source_workspace_sha256": "8c67bb33c2479aebe5a74cc6bdd7d754ec0f5e20cd39f333d642c5f7be403bf4",
+    "source_model_file": "emns/workspace/fast.py",
+    "source_model_sha256": "ffbbe427c5c32cf1d0f4c0f1df79166dfe3d4cb054c8bd61cab826eec1b314a8",
+    "source_generator_file": "revised_case_studies/cs1_cylinder_interaction/run_tfw3d_fine.py",
+    "source_generator_sha256": "8aeed5cfc807322c886932e4db3e82fd497bc293bfe3347fe6fb13cb605a6d9d",
+    "source_classifier_sha256": {
+      "cases/case_6_interaction_obstacle_avoidance/workspace_hybrid.py": "19f0b289214296d84a8afb83ea72981a76267941d878b72fb1efad1c05614542",
+      "emns/workspace/affine.py": "6d21518e6072e669126a60c10fa22865caad818059c6c9761fd5b600e3a21a2e",
+      "hybrid_region/certificates.py": "040453698bce9a1a162a247baf75962863b86588261a7af006297dbbdb3e9ec7"
+    },
+    "model": {
+      "z_m": 0.082,
+      "free_moment_Am2": 0.12,
+      "fixed_xy_m": [
+        0.02,
+        0.0
+      ],
+      "fixed_heading_rad": 1.5707963267948966,
+      "fixed_moment_Am2": 0.145,
+      "holding_field_T": 0.02,
+      "task_force_N": 0.1,
+      "current_limit_A": 15.0,
+      "coil_parameters": [
+        [
+          -13.04945069,
+          -4.41557229,
+          6.47376799,
+          0.12129096,
+          0.00466922,
+          0.0675158
+        ],
+        [
+          -5.10083416,
+          13.54294901,
+          7.85474539,
+          0.05834654,
+          -0.11165548,
+          0.06649454
+        ],
+        [
+          4.05088788,
+          14.23365818,
+          6.44760956,
+          -0.05903076,
+          -0.11020417,
+          0.07011756
+        ],
+        [
+          13.89011305,
+          -0.06092074,
+          4.77365608,
+          -0.12306086,
+          -0.00085745,
+          0.07121839
+        ],
+        [
+          11.44363813,
+          -9.40543896,
+          4.46367162,
+          -0.06806179,
+          0.1024875,
+          0.07102848
+        ],
+        [
+          -9.00577939,
+          -12.78905365,
+          5.98650851,
+          0.06473315,
+          0.10618968,
+          0.0698828
+        ],
+        [
+          0.92820081,
+          8.54965337,
+          8.72298349,
+          -0.00381254,
+          -0.08845466,
+          -0.00374662
+        ],
+        [
+          8.7302819,
+          -4.90773115,
+          7.00109937,
+          -0.07977306,
+          0.04481733,
+          -0.00036032
+        ],
+        [
+          -7.68962762,
+          -6.83258326,
+          8.12112247,
+          0.07498008,
+          0.04542436,
+          -0.00196975
+        ],
+        [
+          2.35614001,
+          -1.11370036,
+          14.00304846,
+          -0.00722183,
+          0.00029277,
+          -0.03982979
+        ]
+      ],
+      "interaction_radius_epsilon_m": 1e-09
+    },
+    "protocol": {
+      "z_m": 0.082,
+      "free_m": 0.12,
+      "layout": "single",
+      "task": [
+        "By=0",
+        "Bz=0.02",
+        "fy=0",
+        "fz=\u00b10.1"
+      ],
+      "current_A": [
+        -15.0,
+        15.0
+      ],
+      "note": "Corrected dBy/dy; 0.781 mm x 5.625 deg stop; initial grid 16 x 16 x 64."
+    },
+    "inside_box_count": 197085,
+    "source_box_counts": {
+      "in_workspace": 197085,
+      "out_of_workspace": 1549,
+      "undetermined": 144612
+    },
+    "stopping_widths": {
+      "x_m": 0.00078125,
+      "y_m": 0.00078125,
+      "heading_rad": 0.09817477042468103
+    },
+    "source_volume_fraction": {
+      "in_workspace": 0.8605785369873047,
+      "out_of_workspace": 0.0015087127685546864,
+      "undetermined": 0.13791275024414065
+    },
+    "qualification": "Fine corrected-dBy/dy model-in boxes. Conditional on the coil/dipole model; custom affine backend is not outward-rounded throughout. No hardware invariance guarantee.",
+    "asset_sha256": "4003893d3f89fb757900a696a3d3243ba29c368bc5b64e827c08d89f913fc35e",
+    "supersedes": {
+      "source_workspace_file": "Results/results_case6_3D_hybrid.json",
+      "source_workspace_sha256": "cb70fe3f55a872435b617215070359ca7f8da2ef0b3133751c3c2e5eb5aeb07f",
+      "inside_box_count": 28231
+    }
+  },
+  "initial_pose": {
+    "created_at": "2026-10-22T20:35:15.105912+08:00",
+    "frame_id": "emns_world",
+    "layout": "single",
+    "position_m": [
+      -0.025868154310137878,
+      -0.029154389118010174,
+      0.082
+    ],
+    "heading_unwrapped_rad": 2.137649375842472,
+    "initialization_rule": "north_pole_in_positive_y_half_plane",
+    "initial_heading_measured_deg": 122.47828731454833,
+    "observed_axis_rad": -1.0039432777473212,
+    "camera_sequence": 81349,
+    "calibration_file": "/home/dz/Documents/CUHK/ROS_CAN/src/case_study1_single_fixed_magnet/config/calibrations/camera_20261022_201223.json",
+    "affine": [
+      [
+        3.5850869711265074e-06,
+        0.0005655526613696383,
+        -0.07490362784172182
+      ],
+      [
+        0.0005692217045395454,
+        -6.791526468844563e-08,
+        -0.0923321576091365
+      ]
+    ],
+    "detector": "green_cylinder_v1",
+    "measured_size": {
+      "length_m": 0.011234805075453977,
+      "diameter_m": 0.004734586792702407,
+      "green_pixels": 153
+    },
+    "nominal_length_m": 0.011,
+    "nominal_diameter_m": 0.004,
+    "trajectory_file": null
+  },
+  "pose_at_prepare": [
+    -0.02530260164876824,
+    -0.029154457033274864,
+    2.0476344942833022
+  ],
+  "id": "trial_20261022_203517_e3ff3181",
+  "phase": "saved",
+  "owner_pid": 1084808,
+  "prepared_utc": "2026-10-22T12:35:17.246543+00:00",
+  "ui_video_required": true,
+  "start_ns": 317205376083458,
+  "stop_ns": 317247172467441,
+  "stop_reason": "tracking lost; initialize heading again",
+  "pose_at_arm": [
+    -0.02530260164876824,
+    -0.029154457033274864,
+    2.1513913294924873
+  ],
+  "heading_unwrapped_at_arm_rad": 2.349726613334077,
+  "commanded_currents_at_arm_A": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "requested_steady_holding_currents_A": [
+    1.092,
+    3.785,
+    0.595,
+    -1.667,
+    -3.621,
+    -1.475,
+    2.461,
+    -2.589,
+    -0.185,
+    -0.257
+  ],
+  "start_wall_ns": 1792672517431839849,
+  "control_stop_reason": "tracking lost; initialize heading again",
+  "control_stop_ns": 317237516044459,
+  "control_stop_wall_ns": 1792672549571801322,
+  "post_stop_record_s": 15.0,
+  "post_stop_until_ns": 317252516044459,
+  "stop_wall_ns": 1792672559228223632,
+  "introduction": "cs1 entering outside TFW",
+  "saved_utc": "2026-10-22T12:36:28.586033+00:00"
+}

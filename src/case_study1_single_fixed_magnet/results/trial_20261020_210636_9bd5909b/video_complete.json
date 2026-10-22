@@ -1,0 +1,11 @@
+{
+  "fps": 5,
+  "size_px": [
+    1920,
+    1048
+  ],
+  "frames": 409,
+  "captured_frames": 282,
+  "dropped_capture_requests": 0,
+  "error": ""
+}

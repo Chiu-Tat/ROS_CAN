@@ -112,7 +112,7 @@
     "current_slew_A_s": 20.0
   },
   "camera": {
-    "port": "/dev/ttyACM0",
+    "port": "/dev/serial/by-id/usb-OpenMV_OpenMV_Virtual_Comm_Port_in_FS_Mode_395338793033-if01",
     "baudrate": 115200
   },
   "tracking": {

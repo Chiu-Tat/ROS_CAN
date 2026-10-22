@@ -9,7 +9,8 @@
   <arg name="post_stop_record_s" default="15"/>
   <arg name="gamepad" default="false"/>
   <arg name="input_source" default="keyboard"/>
-  <arg name="port" default="/dev/ttyACM0"/>
+  <!-- Empty: use the layout config camera.port (stable /dev/serial/by-id path). -->
+  <arg name="port" default=""/>
   <arg name="can_channel" default="can0"/>
   <arg name="joy_device" default=""/>
   <arg name="axis_drive" default="1"/>

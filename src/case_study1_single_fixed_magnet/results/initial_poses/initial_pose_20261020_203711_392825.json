@@ -1,0 +1,36 @@
+{
+  "created_at": "2026-10-20T20:37:11.392825+08:00",
+  "frame_id": "emns_world",
+  "position_m": [
+    -0.02923699776135425,
+    -0.0333576230843194,
+    0.082
+  ],
+  "heading_unwrapped_rad": 1.8077635806709846,
+  "initialization_rule": "north_pole_in_positive_y_half_plane",
+  "initial_heading_measured_deg": 103.57722352990494,
+  "observed_axis_rad": -1.3338290729188085,
+  "camera_sequence": 270673,
+  "calibration_file": "/home/dz/Documents/CUHK/ROS_CAN/src/case_study1_single_fixed_magnet/config/calibrations/camera_20261018_185354.json",
+  "affine": [
+    [
+      3.635104194743381e-06,
+      0.0005640777080321024,
+      -0.07865345815445304
+    ],
+    [
+      0.0005677876151737497,
+      -4.361425577564977e-06,
+      -0.08635021488540372
+    ]
+  ],
+  "detector": "green_cylinder_v1",
+  "measured_size": {
+    "length_m": 0.011642782450170273,
+    "diameter_m": 0.0031537187328769096,
+    "green_pixels": 139
+  },
+  "nominal_length_m": 0.011,
+  "nominal_diameter_m": 0.004,
+  "trajectory_file": null
+}

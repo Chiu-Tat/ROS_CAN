@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(case_study1_auto_planning_control)
+find_package(catkin REQUIRED COMPONENTS rospy std_msgs std_srvs geometry_msgs sensor_msgs case_study1_single_fixed_magnet)
+catkin_python_setup()
+catkin_package()
+catkin_install_python(PROGRAMS scripts/main.py scripts/controller_node.py scripts/control_panel.py scripts/simulate_feedback.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(DIRECTORY scripts config data launch docs DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} PATTERN "__pycache__" EXCLUDE)

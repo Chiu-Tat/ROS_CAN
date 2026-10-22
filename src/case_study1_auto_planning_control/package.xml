@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>case_study1_auto_planning_control</name>
+  <version>0.1.0</version>
+  <description>Case Study 1 autonomous trajectory acquisition and tracking for Single, Gate and Triangle layouts.</description>
+  <maintainer email="dz@todo.todo">Da Zhao</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>case_study1_single_fixed_magnet</depend>
+  <depend>rospy</depend><depend>std_msgs</depend><depend>std_srvs</depend><depend>geometry_msgs</depend><depend>sensor_msgs</depend>
+  <exec_depend>roslaunch</exec_depend><exec_depend>rosnode</exec_depend>
+</package>

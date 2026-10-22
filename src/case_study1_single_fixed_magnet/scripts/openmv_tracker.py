@@ -209,7 +209,12 @@ class LineTracker:
             self.fps.publish(Float32(data=fps))
         self.publish_preview(frame)
         if frame.get('detector') != DETECTOR:
-            self.invalidate('Upload current GREEN cylinder camera script')
+            # Two OpenMV boards may be connected (e.g. the Case 8 laser camera).
+            other = 'laser (Case 8) camera' if 'laser' in frame else 'detector=%r' % frame.get('detector')
+            message = ('Wrong camera on %s (%s): select the CS1 green-cylinder camera '
+                       'or upload scripts/openmv_code.py' % (getattr(self, 'port', '?'), other))
+            rospy.logwarn_throttle(5, message)
+            self.invalidate(message)
             return
         if self.image_size and frame.get('image_size_px') != self.image_size:
             self.invalidate('Camera dimensions differ from calibration')
@@ -330,22 +335,27 @@ class LineTracker:
         while not rospy.is_shutdown():
             try:
                 if self.ser is None:
-                    self.ser = serial.Serial(rospy.get_param('~port', camera['port']),
-                                             camera['baudrate'], timeout=0.1, exclusive=True)
+                    self.port = rospy.get_param('~port', '') or camera['port']
+                    self.ser = serial.Serial(self.port, camera['baudrate'], timeout=0.1, exclusive=True)
                     self.ser.reset_input_buffer()
                     packets.clear()
                     last_complete = time.monotonic()
                     with self.lock:
                         self.last_sequence = None
                         self.invalidate()
+                # Local handle: the shutdown hook may close/clear self.ser from
+                # another thread while this loop is between reads.
+                ser = self.ser
+                if ser is None:
+                    continue
                 # Read chunks, not one byte at a time: JPEG lines are much larger
                 # than the old pose-only packets. Preserve incomplete packets.
-                chunk = self.ser.read(max(1,min(self.ser.in_waiting,65536)))
+                chunk = ser.read(max(1,min(ser.in_waiting,65536)))
                 frames = packets.feed(chunk)
                 for _ in range(3):
-                    if not self.ser.in_waiting:
+                    if not ser.in_waiting:
                         break
-                    frames.extend(packets.feed(self.ser.read(min(self.ser.in_waiting,65536))))
+                    frames.extend(packets.feed(ser.read(min(ser.in_waiting,65536))))
                 with self.lock:
                     # A streaming camera can produce more bytes while we drain.
                     # Keep the bounded parser's partial packet for the next read;
@@ -363,6 +373,8 @@ class LineTracker:
                             break
                     self.process(frames[-1])
             except (OSError, serial.SerialException) as exc:
+                if rospy.is_shutdown():
+                    break   # port closed by the shutdown hook; not a camera fault
                 with self.lock:
                     self.invalidate()
                 self.close()

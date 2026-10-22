@@ -18,7 +18,11 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent / 'src'))
 from calibrate_camera import fit
 from cs1_experiment.camera_stream import JsonFrameBuffer, decode_preview
-from cs1_experiment.core import PACKAGE
+from cs1_experiment.core import PACKAGE, load_config
+
+
+def default_camera_port():
+    return load_config()['camera']['port']
 
 
 def mapped_heading(affine, start, end):
@@ -93,7 +97,8 @@ class PixelView(QtWidgets.QWidget):
 
 
 class CalibrationWindow(QtWidgets.QWidget):
-    def __init__(self, port='/dev/ttyACM0', position_only=True):
+    def __init__(self, port=None, position_only=True):
+        port = port or default_camera_port()
         super().__init__()
         self.setWindowTitle('CS1 | Camera → EM coordinate calibration')
         self.resize(1240, 810)
@@ -380,7 +385,7 @@ class CalibrationWindow(QtWidgets.QWidget):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--port', default='/dev/ttyACM0')
+    parser.add_argument('--port', default=None, help='Default: config camera.port (CS1 camera by USB id)')
     parser.add_argument('--connect', action='store_true', help='Connect to the camera when the window opens')
     parser.add_argument('--check-angle', action='store_true', help='Also show optional angle validation controls')
     args = parser.parse_args()

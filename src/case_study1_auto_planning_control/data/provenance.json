@@ -1,0 +1,25 @@
+{
+  "description": "Planned references used on presentation slides 7 and 8. Original paths are unmodified.",
+  "source_root_hint": "Workspace_eMNS-main/revised_case_studies",
+  "trajectories": {
+    "single": {
+      "source_relative": "results/cs1/presentation/trajectory_single_planned.json",
+      "sha256": "fa3c9702beedc700a4b7c4f31926c16339df97dc37c14b4bc9b79dd5edeb09cf"
+    },
+    "gate": {
+      "source_relative": "results/cs1/presentation/trajectory_gate_planned.json",
+      "sha256": "8fa1e02b885687e1c86d728c294f0e8ba69204e11b6d34b584ff9c8d145af41d"
+    },
+    "triangle": {
+      "source_relative": "results/cs1/presentation/trajectory_triangle_planned.json",
+      "sha256": "384b08f98b92d7ccccdfab9df07a77954c302fd385183c39f6e0ffacc1f2d13a"
+    }
+  },
+  "source_code_sha256": {
+    "cs1_cylinder_interaction/presentation.py": "e8547520950dab800585650c568868b4e5fd8dc73e824ccce669b2bef913616b",
+    "cs1_cylinder_interaction/nonholonomic.py": "e43b9416baf42049d5669dacdea35535081b9f600bc4932528e1193f2e448686",
+    "cs1_cylinder_interaction/closed_loop.py": "8a0610be809859f1e37249d0a57bc967a6f12239126841f5d0aef82ae6e75889",
+    "cs1_cylinder_interaction/common.py": "21df12aef941fdfbcee9f464b4206ec610b9ed76c1634f60d1ea089cb6d1ac90",
+    "cs1_cylinder_interaction/experiment_refs.py": "fdc84799881aa0d650a1f815dc1bc991e192bc2b7c093c0f1a87c6e7dfa37851"
+  }
+}

@@ -78,3 +78,19 @@ class LayoutTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+
+class CameraPortTests(unittest.TestCase):
+    """Two OpenMV boards can be connected; ttyACM numbers follow plug order."""
+    def test_every_layout_uses_the_stable_cs1_camera_id(self):
+        from cs1_experiment.core import LAYOUT_LABELS, load_config
+        ports = {load_config(layout=layout)['camera']['port'] for layout in LAYOUT_LABELS}
+        self.assertEqual(len(ports), 1)
+        port = ports.pop()
+        self.assertTrue(port.startswith('/dev/serial/by-id/'), port)
+        self.assertNotIn('ttyACM', port)
+
+    def test_launcher_defers_to_config_port_unless_given(self):
+        command = launch_command('gate', 'example.json', simulate=True)
+        self.assertIn('port:=', command)
+        self.assertIn('port:=/dev/x', launch_command('gate', 'example.json', simulate=True, port='/dev/x'))

@@ -26,14 +26,7 @@ class ControllerNode:
             raise ValueError('Launch layout and controller configuration differ')
         # 'field_steer' (default, Case-6 style) or the older 'pose_hold'.
         self.controller_mode = self.config.get('controller', 'pose_hold')
-        if self.controller_mode == 'field_steer':
-            from cs1_experiment.field_steer import FieldSteerController
-            self.core = FieldSteerController(self.config)
-        elif self.controller_mode == 'pose_hold':
-            from cs1_experiment.pose_hold import PoseHoldController
-            self.core = PoseHoldController(self.config)
-        else:
-            raise ValueError('Unknown controller mode: %s' % self.controller_mode)
+        self.core = self.create_core(self.config)
         self.hardware = rospy.get_param('~hardware', False)
         self.calibration_path = rospy.get_param('~calibration', str(PACKAGE/'config/camera_calibration.json'))
         if self.hardware:
@@ -112,6 +105,16 @@ class ControllerNode:
                 lambda msg, name=topic:self.trials.record(name,message_dict(msg)),queue_size=50))
         self.publish_recording()
         rospy.on_shutdown(self.close)
+
+    def create_core(self, config):
+        """Allow experiment packages to share the CAN/recording lifecycle."""
+        if self.controller_mode == 'field_steer':
+            from cs1_experiment.field_steer import FieldSteerController
+            return FieldSteerController(config)
+        if self.controller_mode == 'pose_hold':
+            from cs1_experiment.pose_hold import PoseHoldController
+            return PoseHoldController(config)
+        raise ValueError('Unknown controller mode: %s' % self.controller_mode)
 
     def publish_recording(self):
         self.recording_pub.publish(String(data=json.dumps(self.trials.snapshot(), allow_nan=False)))
@@ -371,7 +374,8 @@ class ControllerNode:
         if self.hardware:
             mode = self.config.get('controller', 'pose_hold')
             if not self.config.get(mode, {}).get('hardware_validated', False):
-                return 'Pose hold is not hardware-validated; powered arming is locked after uncontrolled motion'
+                return ('Powered arming is locked for the %s layout until it is hardware-validated '
+                        '(set %s.hardware_validated in its config)' % (getattr(self, 'layout', 'single'), mode))
             if self.output.initialized is not True:
                 return 'Prepare Current mode / Zero before arming'
             if not all(self.output.feedback_snapshot()['fresh']):

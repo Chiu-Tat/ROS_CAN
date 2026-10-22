@@ -121,7 +121,7 @@ class CurrentFeedbackTests(unittest.TestCase):
     def test_hardware_arm_requires_preparation_and_all_ten_fresh_reports(self):
         node = self.controller()
         node.config = {'pose_hold':{'hardware_validated':False}}
-        self.assertIn('not hardware-validated',node.arm_check())
+        self.assertIn('Powered arming is locked',node.arm_check())
         node.config['pose_hold']['hardware_validated'] = True
         self.assertIn('Current mode',node.arm_check())
         self.driver.initialized = True

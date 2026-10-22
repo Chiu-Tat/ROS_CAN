@@ -20,7 +20,8 @@ def default_calibration():
     return str(files[0] if files else PACKAGE/'config/camera_calibration.json')
 
 
-def launch_command(layout, calibration, hardware=False, simulate=False, port='/dev/ttyACM0'):
+def launch_command(layout, calibration, hardware=False, simulate=False, port=''):
+    """port '' = use the layout config camera.port (stable /dev/serial/by-id path)."""
     if layout not in LAYOUT_LABELS:raise ValueError('Unknown layout: '+layout)
     if hardware and simulate:raise ValueError('Simulation cannot enable CAN output')
     return ['roslaunch','case_study1_single_fixed_magnet','experiment.launch',
@@ -94,7 +95,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--layout',choices=list(LAYOUT_LABELS),help='Skip layout dialog and use this layout')
     parser.add_argument('--calibration',default=default_calibration())
-    parser.add_argument('--port',default='/dev/ttyACM0')
+    parser.add_argument('--port',default='',help='Camera serial port (default: config camera.port)')
     parser.add_argument('--hardware',action='store_true',help='Connect CAN; still starts disarmed')
     parser.add_argument('--preview',action='store_true',help='Simulated feedback, no camera/CAN')
     args = parser.parse_args()
