@@ -1,0 +1,12 @@
+<launch>
+  <arg name="layout" default="single"/>
+  <arg name="gui" default="true"/>
+  <arg name="results_dir" default="$(eval find('case_study1_auto_planning_control') + '/results/' + arg('layout'))"/>
+  <arg name="post_stop_record_s" default="2"/>
+  <include file="$(find case_study1_auto_planning_control)/launch/experiment.launch">
+    <arg name="layout" value="$(arg layout)"/><arg name="gui" value="$(arg gui)"/>
+    <arg name="hardware" value="false"/><arg name="simulate" value="true"/>
+    <arg name="results_dir" value="$(arg results_dir)"/>
+    <arg name="post_stop_record_s" value="$(arg post_stop_record_s)"/>
+  </include>
+</launch>

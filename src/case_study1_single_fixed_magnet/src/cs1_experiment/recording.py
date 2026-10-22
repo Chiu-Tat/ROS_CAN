@@ -231,7 +231,8 @@ class TrialStore:
         duration = ((meta.get('stop_ns') or 0)-(meta.get('start_ns') or 0))/1e9
         video = json.loads((folder/'video_complete.json').read_text()) if (folder/'video_complete.json').exists() else {}
         data = json.loads((folder/'data_complete.json').read_text()) if (folder/'data_complete.json').exists() else {}
-        text = '# CS1 — one fixed magnet, manually controlled free magnet\n\n'
+        title = meta.get('experiment_title', 'CS1 — '+meta.get('layout','single')+' fixed-magnet layout, manual control')
+        text = '# '+title+'\n\n'
         text += (note.strip()+'\n\n') if note.strip() else ''
         text += 'Trial: %s\n\n'%meta['id']
         text += 'Mode: %s. Input: %s.\n\n'%('CAN hardware' if meta.get('hardware') else 'CAN disabled / preview',meta.get('input_source','unknown'))

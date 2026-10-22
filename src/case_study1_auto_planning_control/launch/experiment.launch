@@ -1,0 +1,53 @@
+<launch>
+  <arg name="layout" default="single"/>
+  <arg name="config" default="$(eval find('case_study1_auto_planning_control') + '/config/layouts/' + arg('layout') + '.json')"/>
+  <arg name="hardware" default="false"/>
+  <arg name="simulate" default="false"/>
+  <arg name="gui" default="true"/>
+  <arg name="record_ui" default="$(arg gui)"/>
+  <arg name="results_dir" default="$(eval find('case_study1_auto_planning_control') + '/results/' + arg('layout'))"/>
+  <arg name="post_stop_record_s" default="2"/>
+  <arg name="gamepad" default="false"/>
+  <arg name="input_source" default="keyboard"/>
+  <!-- Empty: use the layout config camera.port (stable /dev/serial/by-id path). -->
+  <arg name="port" default=""/>
+  <arg name="can_channel" default="can0"/>
+  <arg name="joy_device" default=""/>
+  <arg name="axis_drive" default="1"/>
+  <arg name="axis_turn" default="0"/>
+  <arg name="deadman_button" default="4"/>
+  <arg name="stop_button" default="1"/>
+  <arg name="calibration" default="$(find case_study1_single_fixed_magnet)/config/camera_calibration.json"/>
+  <param name="/cs1/simulated_feedback" value="$(arg simulate)" type="bool"/>
+  <param name="/cs1/layout" value="$(arg layout)"/>
+  <param name="/cs1/input_source" value="$(arg input_source)"/>
+  <node pkg="case_study1_auto_planning_control" type="controller_node.py" name="cs1_controller" output="screen" required="true">
+    <param name="config" value="$(arg config)"/>
+    <param name="record_ui" value="$(arg record_ui)" type="bool"/>
+    <param name="results_dir" value="$(arg results_dir)"/>
+    <param name="post_stop_record_s" value="$(arg post_stop_record_s)" type="double"/>
+    <param name="hardware" value="$(arg hardware)" type="bool"/>
+    <param name="can_channel" value="$(arg can_channel)"/>
+    <param name="calibration" value="$(arg calibration)"/>
+  </node>
+  <node if="$(arg simulate)" pkg="case_study1_auto_planning_control" type="simulate_feedback.py" name="cs1_preview_feedback" output="screen" required="true">
+    <param name="config" value="$(arg config)"/>
+  </node>
+  <node unless="$(arg simulate)" pkg="case_study1_single_fixed_magnet" type="openmv_tracker.py" name="cs1_openmv_tracker" output="screen" required="true">
+    <param name="config" value="$(arg config)"/>
+    <param name="results_dir" value="$(arg results_dir)"/>
+    <param name="legacy_tracking_log" value="false" type="bool"/>
+    <param name="port" value="$(arg port)"/>
+    <param name="calibration" value="$(arg calibration)"/>
+  </node>
+  <node if="$(arg gamepad)" pkg="case_study1_single_fixed_magnet" type="gamepad_node.py" name="cs1_gamepad" output="screen">
+    <param name="device" value="$(arg joy_device)"/>
+    <param name="axis_drive" value="$(arg axis_drive)" type="int"/>
+    <param name="axis_turn" value="$(arg axis_turn)" type="int"/>
+    <param name="deadman_button" value="$(arg deadman_button)" type="int"/>
+    <param name="stop_button" value="$(arg stop_button)" type="int"/>
+  </node>
+  <node if="$(arg gui)" pkg="case_study1_auto_planning_control" type="control_panel.py" name="cs1_control_panel" output="screen" required="true">
+    <param name="config" value="$(arg config)"/>
+  </node>
+</launch>
